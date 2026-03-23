@@ -1,5 +1,6 @@
+/* LIGHT MODE (DEFAULT) */
 :root {
-    --bg-main: #F9FAFB;
+    --bg-main: #F4F6F8;
     --bg-card: #FFFFFF;
     --primary-color: #0d5c46; /* Emerald Green */
     --accent-gold: #d4af37;
@@ -7,89 +8,126 @@
     --text-muted: #6b7280;
     --border-color: #e5e7eb;
     
-    /* Warna Tajwid Standar Kemenag/Internasional */
-    --tj-ghunnah: #e91e63; /* Pink */
-    --tj-qalqalah: #00bcd4; /* Cyan/Biru */
-    --tj-mad: #f44336; /* Merah */
-    --tj-ikhfa: #ff9800; /* Oranye */
-    --tj-iqlab: #4caf50; /* Hijau Terang */
+    --tj-ghunnah: #e91e63; --tj-qalqalah: #00bcd4; --tj-mad: #f44336;
+    --tj-ikhfa: #ff9800; --tj-iqlab: #4caf50;
+}
+
+/* DARK MODE (AUTO AKTIF JIKA HP/LAPTOP SEDANG DARK MODE) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-main: #000000;
+        --bg-card: #121212;
+        --primary-color: #00A86B; /* Neon Emerald */
+        --text-dark: #FFFFFF;
+        --text-muted: #A0A0A0;
+        --border-color: #222222;
+    }
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-body { background-color: var(--bg-main); color: var(--text-dark); }
+body { background-color: var(--bg-main); color: var(--text-dark); transition: background-color 0.3s, color 0.3s; }
 
-/* HEADER */
-.top-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-.brand-logo { font-size: 18px; font-weight: 700; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
-.date-container { text-align: center; cursor: pointer; padding: 5px 15px; background: #f3f4f6; border-radius: 8px; transition: 0.2s; }
-.date-container:hover { background: #e5e7eb; }
-.date-greg { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-.date-hijri { font-size: 14px; color: var(--primary-color); font-weight: 700; }
-.btn-icon { background: none; border: none; font-size: 20px; color: var(--primary-color); cursor: pointer; }
+/* LAYOUT RESPONSIVE */
+.app-layout { display: flex; min-height: 100vh; }
+.main-content { flex: 1; padding-bottom: 80px; width: 100%; }
+.sidebar { width: 250px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+.desktop-only { display: none; }
 
-/* LAYOUT PAGES */
-.page { display: none; padding: 20px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.3s; }
+@media (min-width: 768px) {
+    .desktop-only { display: flex; }
+    .mobile-only { display: none !important; }
+    .main-content { padding: 40px; padding-bottom: 40px; }
+    .surah-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+/* TYPOGRAPHY & UTILS */
+.text-center { text-align: center; }
+.text-primary { color: var(--primary-color); }
+.text-muted { color: var(--text-muted); }
+.small { font-size: 12px; }
+.mt-3 { margin-top: 15px; }
+.mb-3 { margin-bottom: 15px; }
+
+/* HEADER & NAV */
+.top-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); }
+.brand-logo { font-size: 18px; font-weight: 700; color: var(--primary-color); display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.btn-icon { background: none; border: none; font-size: 20px; color: var(--text-dark); cursor: pointer; }
+
+/* BUTTONS & NAVS */
+.side-nav { display: flex; flex-direction: column; gap: 10px; }
+.nav-btn { background: transparent; border: none; padding: 12px 15px; text-align: left; border-radius: 12px; color: var(--text-muted); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 15px; transition: 0.2s; }
+.nav-btn:hover, .nav-btn.active { background: rgba(0, 168, 107, 0.1); color: var(--primary-color); }
+.btn-primary { background: var(--primary-color); color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+
+/* CARDS & GRIDS */
+.page { display: none; animation: fadeIn 0.3s; max-width: 900px; margin: 0 auto; padding: 20px; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* PENCARIAN & LIST SURAT */
-.search-wrapper { display: flex; align-items: center; background: var(--bg-card); padding: 12px 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid var(--border-color); }
-.search-wrapper i { color: var(--text-muted); margin-right: 10px; }
-.search-wrapper input { border: none; outline: none; width: 100%; font-size: 15px; background: transparent; }
+.header-banner { background: linear-gradient(135deg, var(--primary-color), #093b2d); padding: 25px; border-radius: 16px; margin-bottom: 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
+.date-greg { font-size: 12px; opacity: 0.8; }
+.date-hijri { font-size: 18px; font-weight: 700; }
 
-.surah-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-.surah-card { background: var(--bg-card); padding: 20px; border-radius: 16px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
-.surah-card:hover { border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(13, 92, 70, 0.1); transform: translateY(-2px); }
-.s-num { width: 40px; height: 40px; background: #e8f5e9; color: var(--primary-color); display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; margin-right: 15px; }
-.s-name { flex: 1; }
-.s-name h4 { margin: 0; font-size: 16px; color: var(--text-dark); }
-.s-name p { margin: 0; font-size: 12px; color: var(--text-muted); }
-.s-arab { font-family: 'Amiri', serif; font-size: 22px; color: var(--primary-color); }
+.search-wrapper { display: flex; align-items: center; background: var(--bg-card); padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+.search-wrapper input { border: none; outline: none; width: 100%; font-size: 15px; background: transparent; color: var(--text-dark); margin-left: 10px; }
+
+.surah-grid { display: grid; gap: 15px; }
+.surah-card { background: var(--bg-card); padding: 20px; border-radius: 16px; display: flex; align-items: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
+.surah-card:active { transform: scale(0.98); }
+.s-num { width: 40px; height: 40px; background: rgba(0, 168, 107, 0.1); color: var(--primary-color); display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; margin-right: 15px; }
+.s-arab { font-family: 'Amiri', serif; font-size: 22px; color: var(--primary-color); margin-left: auto; }
 
 /* BACA SURAT */
-.read-navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--bg-card); padding: 15px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.btn-back { background: #f3f4f6; border: none; width: 40px; height: 40px; border-radius: 50%; color: var(--text-dark); cursor: pointer; }
-.surah-title-header { text-align: center; }
-.surah-title-header h2 { font-size: 18px; color: var(--primary-color); margin: 0; }
-.surah-title-header small { color: var(--text-muted); font-size: 12px; }
-
-.ayah-item { background: var(--bg-card); padding: 25px 20px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid var(--border-color); transition: 0.3s; }
-.ayah-item.playing { background: #e8f5e9; border-color: var(--primary-color); }
+.read-navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); position: sticky; top: 10px; z-index: 90; }
+.btn-back { background: var(--bg-main); border: none; width: 40px; height: 40px; border-radius: 50%; color: var(--text-dark); cursor: pointer; }
+.ayah-item { background: var(--bg-card); padding: 25px 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+.ayah-item.playing { border-left: 4px solid var(--primary-color); background: rgba(0, 168, 107, 0.05); }
 .ayah-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.ayah-badge { background: #f3f4f6; color: var(--primary-color); font-size: 12px; font-weight: bold; padding: 5px 12px; border-radius: 20px; }
-.btn-play-ayah { background: none; border: none; color: var(--primary-color); font-size: 20px; cursor: pointer; }
+.ayah-badge { background: var(--bg-main); color: var(--primary-color); font-size: 12px; font-weight: bold; padding: 5px 12px; border-radius: 20px; }
 
-.text-arab { font-family: 'Amiri', serif; text-align: right; line-height: 2.4; margin-bottom: 15px; color: #000; direction: rtl; }
+.text-arab { font-family: 'Amiri', serif; text-align: right; line-height: 2.4; margin-bottom: 15px; direction: rtl; }
 .text-latin { font-style: italic; color: var(--primary-color); margin-bottom: 8px; line-height: 1.5; }
 .text-trans { color: var(--text-muted); line-height: 1.6; }
 
-/* TAJWID COLORS */
-.tj-ghunnah { color: var(--tj-ghunnah); }
-.tj-qalqalah { color: var(--tj-qalqalah); }
-.tj-mad { color: var(--tj-mad); }
-.tj-ikhfa { color: var(--tj-ikhfa); }
-.tj-iqlab { color: var(--tj-iqlab); }
+/* ALAT MUSLIM (TOOLS) */
+.section-title { margin-bottom: 20px; color: var(--text-dark); }
+.tool-card { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 15px; }
+.card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.prayer-times-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: center; }
+.prayer-item { background: var(--bg-main); padding: 10px 5px; border-radius: 10px; }
+.prayer-item small { display: block; color: var(--text-muted); font-size: 11px; margin-bottom: 5px; }
+.prayer-item strong { color: var(--text-dark); font-size: 14px; }
+.prayer-item.active { background: var(--primary-color); color: white; }
+.prayer-item.active small, .prayer-item.active strong { color: white; }
+
+/* COMPASS */
+.compass-container { margin: 20px auto; width: 150px; height: 150px; position: relative; }
+.compass-ring { width: 100%; height: 100%; border: 4px solid var(--primary-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; position: relative; transition: transform 0.1s ease-out; }
+.compass-ring::before { content: 'U'; position: absolute; top: 5px; font-weight: bold; color: var(--text-muted); }
+.compass-arrow { font-size: 40px; color: var(--primary-color); transform: rotate(-45deg); /* Point up */ }
+
+/* BOTTOM NAV MOBILE */
+.bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--bg-card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 100; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+.bottom-nav .nav-btn { flex-direction: column; padding: 5px; gap: 5px; font-size: 11px; width: 100%; text-align: center; border-radius: 0; }
+.bottom-nav .nav-btn.active { background: transparent; }
 
 /* MODALS */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; justify-content: center; align-items: flex-end; }
-.modal-box { background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 25px; animation: slideUp 0.3s; }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: flex-end; }
+.modal-box { background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 25px; border-top: 1px solid var(--border-color); animation: slideUp 0.3s; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
-.modal-header h3 { font-size: 18px; color: var(--text-dark); }
-.modal-header i { font-size: 20px; color: var(--text-muted); cursor: pointer; }
 
-/* PENGATURAN UI */
 .setting-block { margin-bottom: 20px; }
-.setting-block label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--text-dark); }
+.setting-block label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 10px; }
 .setting-block input[type="range"] { width: 100%; accent-color: var(--primary-color); }
-.setting-block select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; font-size: 14px; outline: none; }
+.setting-block select { width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-main); color: var(--text-dark); border: 1px solid var(--border-color); outline: none; }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 600; font-size: 14px; }
+.toggle-row input { width: 20px; height: 20px; accent-color: var(--primary-color); }
 
-.setting-toggles { display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
-.toggle-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 600; }
-.toggle-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary-color); }
-
-/* KALENDER UI */
+/* KALENDER GRID */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
-.cal-day { padding: 10px; background: #f3f4f6; border-radius: 8px; font-weight: bold; color: var(--text-dark); }
+.cal-day { padding: 10px; background: var(--bg-main); border-radius: 8px; font-weight: bold; }
 .cal-day.today { background: var(--primary-color); color: white; }
+
+/* TAJWID COLORS */
+.tj-ghunnah { color: var(--tj-ghunnah); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-mad { color: var(--tj-mad); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-iqlab { color: var(--tj-iqlab); }
 .hidden { display: none !important; }
