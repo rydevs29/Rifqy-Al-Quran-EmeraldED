@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rifqy Al-Quran - Emerald V2</title>
+    <title>Rifqy Al-Quran - Ultimate Fix</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -23,27 +23,49 @@
         <main class="main-content">
             <header class="top-header">
                 <div class="brand-logo mobile-only"><i class="fas fa-book-open"></i> Rifqy Quran</div>
-                <div class="date-hijri text-primary cursor-pointer" onclick="openCalendarModal()">
-                    <span id="date-hijri-text">Memuat...</span> <i class="fas fa-calendar-alt"></i>
-                </div>
-                <button class="btn-icon mobile-only" onclick="openSettingsModal()"><i class="fas fa-sliders-h"></i></button>
+                <button class="btn-icon" onclick="openSettingsModal()"><i class="fas fa-ellipsis-v"></i></button>
             </header>
 
+            <div class="date-banner text-center" onclick="openCalendarModal()">
+                <div id="date-greg" class="small text-muted">Memuat Tanggal...</div>
+                <div id="date-hijri" class="font-bold text-primary mt-1">Memuat Hijriah... <i class="fas fa-calendar-alt small"></i></div>
+            </div>
+
             <section id="page-home" class="page active">
-                <div id="continue-reading-card" class="tool-card hidden mb-3 cursor-pointer" onclick="continueReading()">
+                
+                <div id="continue-reading-card" class="tool-card bg-primary text-white hidden mb-3 cursor-pointer" onclick="continueReading()">
                     <div class="flex-between">
                         <div>
-                            <small class="text-muted">Lanjutkan Membaca</small>
-                            <h3 class="text-primary mt-1" id="cr-surah">Al-Baqarah</h3>
-                            <p class="small text-muted" id="cr-ayah">Ayat 1</p>
+                            <small class="opacity-75">Terakhir Baca</small>
+                            <h2 class="mt-1 mb-1" id="cr-surah">Al-Fatihah</h2>
+                            <p class="small" id="cr-ayah">Ayat No: 1</p>
                         </div>
-                        <div class="icon-circle"><i class="fas fa-bookmark"></i></div>
+                        <div class="icon-circle-light"><i class="fas fa-book-reader"></i></div>
+                    </div>
+                    <button class="btn-light mt-2 w-100 font-bold">Lanjutkan Membaca <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <div class="dashboard-grid mb-3">
+                    <div class="dash-btn" onclick="switchPage('page-tools')">
+                        <i class="fas fa-clock text-primary"></i><span>Jadwal</span>
+                    </div>
+                    <div class="dash-btn" onclick="switchPage('page-tools')">
+                        <i class="fas fa-kaaba text-warning"></i><span>Kiblat</span>
+                    </div>
+                    <div class="dash-btn" onclick="alert('Fitur Tasbih')">
+                        <i class="fas fa-circle-notch text-danger"></i><span>Tasbih</span>
+                    </div>
+                    <div class="dash-btn" onclick="alert('Kumpulan Doa')">
+                        <i class="fas fa-hands text-success"></i><span>Doa</span>
                     </div>
                 </div>
 
+                <div class="flex-between mb-2">
+                    <h3 class="font-bold">Daftar Surat</h3>
+                </div>
                 <div class="search-wrapper mb-3">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="search-input" placeholder="Cari Nama atau Nomor Surat (1-114)..." oninput="filterSurah()">
+                    <input type="text" id="search-input" placeholder="Cari Nama atau Nomor Surat..." oninput="filterSurah()">
                 </div>
                 
                 <div id="surah-list" class="surah-grid"></div>
@@ -54,12 +76,12 @@
                     <button class="btn-back" onclick="switchPage('page-home')"><i class="fas fa-arrow-left"></i></button>
                     
                     <div class="text-center cursor-pointer" onclick="openTafsirModal()">
-                        <h2 id="read-surah-name" class="text-primary m-0">Nama <i class="fas fa-info-circle small text-muted"></i></h2>
+                        <h2 id="read-surah-name" class="text-primary m-0 font-bold">Nama <i class="fas fa-info-circle small text-muted"></i></h2>
                         <small id="read-surah-info" class="text-muted">Info Surat</small>
                     </div>
 
                     <button class="btn-outline-primary small-btn" onclick="toggleAutoScroll()">
-                        <i class="fas fa-angle-double-down"></i> <span id="btn-autoscroll-txt">Auto: Off</span>
+                        <i class="fas fa-angle-double-down"></i> <span id="btn-autoscroll-txt">Off</span>
                     </button>
                 </div>
                 
@@ -67,15 +89,15 @@
             </section>
 
             <section id="page-tools" class="page">
-                <h2 class="section-title">Alat Muslim</h2>
+                <h2 class="section-title mb-3 font-bold text-center">Jadwal & Arah Kiblat</h2>
                 <div class="tool-card mb-3">
-                    <div class="flex-between">
-                        <h3><i class="fas fa-clock"></i> Jadwal Sholat</h3>
+                    <div class="flex-between mb-2">
+                        <h3 class="text-primary"><i class="fas fa-clock"></i> Jadwal Sholat</h3>
                         <small id="location-text"><i class="fas fa-map-marker-alt"></i> Jakarta</small>
                     </div>
                     <div class="prayer-times-grid mt-3" id="prayer-times"></div>
                 </div>
-                </section>
+            </section>
         </main>
     </div>
 
@@ -87,7 +109,7 @@
     <div id="modal-tafsir" class="modal-overlay">
         <div class="modal-box tafsir-box">
             <div class="flex-between mb-3 border-bottom pb-2">
-                <h3 class="text-primary"><i class="fas fa-book-open"></i> Deskripsi & Tafsir</h3>
+                <h3 class="text-primary"><i class="fas fa-book-open"></i> Tafsir Surat</h3>
                 <i class="fas fa-times cursor-pointer text-muted" onclick="closeModal('modal-tafsir')"></i>
             </div>
             <div id="tafsir-content" class="text-muted" style="line-height: 1.6; max-height: 60vh; overflow-y: auto;">
@@ -99,22 +121,23 @@
     <div id="modal-settings" class="modal-overlay">
         <div class="modal-box">
             <div class="flex-between mb-3 border-bottom pb-2">
-                <h3>Pengaturan Aplikasi</h3>
+                <h3 class="font-bold">Pengaturan Aplikasi</h3>
                 <i class="fas fa-times cursor-pointer text-muted" onclick="closeModal('modal-settings')"></i>
             </div>
             
             <div class="setting-block">
-                <label>Qari (Suara Murottal)</label>
+                <label class="font-bold text-primary">Pilihan Qari (Audio)</label>
                 <select id="qari-selector" class="form-control" onchange="changeQari()">
                     <option value="05">Mishary Rasyid Alafasy</option>
                     <option value="03">Abdurrahman As-Sudais</option>
+                    <option value="01">Abdullah Al-Juhany</option>
                 </select>
             </div>
             
-            <div class="setting-block"><label>Ukuran Arab</label><input type="range" min="20" max="60" value="32" oninput="updateFont('arab', this.value)"></div>
-            <div class="setting-block"><label>Ukuran Latin/Terjemah</label><input type="range" min="12" max="24" value="14" oninput="updateFont('latin', this.value)"></div>
+            <div class="setting-block"><label class="font-bold text-primary">Ukuran Font Arab</label><input type="range" min="20" max="60" value="32" oninput="updateFont('arab', this.value)"></div>
+            <div class="setting-block"><label class="font-bold text-primary">Ukuran Font Latin/Terjemah</label><input type="range" min="12" max="24" value="14" oninput="updateFont('latin', this.value)"></div>
             
-            <div class="setting-toggles">
+            <div class="setting-toggles mt-3">
                 <label class="toggle-row"><span>Autoplay Audio</span><input type="checkbox" id="toggle-autoplay" checked onchange="savePrefs()"></label>
                 <label class="toggle-row"><span>Tajwid Berwarna</span><input type="checkbox" id="toggle-tajwid" checked onchange="toggleFeature()"></label>
                 <label class="toggle-row"><span>Tampilkan Latin</span><input type="checkbox" id="toggle-latin" checked onchange="toggleFeature()"></label>
