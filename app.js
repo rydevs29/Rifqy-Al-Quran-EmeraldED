@@ -59,7 +59,7 @@ function filterSurah() {
     else renderSurahs(allSurahs.filter(s => s.namaLatin.toLowerCase().includes(q) || s.arti.toLowerCase().includes(q)));
 }
 
-// --- BUG FIX: DIRECT LINK SHARE ---
+// --- BUG FIX: DIRECT LINK SHARE & CLEAN URL ---
 function checkDirectLink() {
     const p = new URLSearchParams(window.location.search);
     const surahP = p.get('surah');
@@ -115,31 +115,24 @@ async function openSurah(nomor, targetAyah = 1) {
     } catch(e) { alert("Gagal memuat."); switchPage('page-home'); }
 }
 
-// --- BUG FIX: AUDIO PLAY/PAUSE LOGIC ---
+// --- BUG FIX: AUDIO PLAY/PAUSE FIXED LOGIC ---
 function playAyah(idx) {
     const icon = document.getElementById(`icon-play-${idx}`);
     const audioUrl = currentSurah.ayat[idx].audio[prefs.qari];
 
     if (activeAyahIndex === idx && !audioEngine.paused) {
-        audioEngine.pause(); 
-        icon.className = 'fas fa-play';
+        audioEngine.pause(); icon.className = 'fas fa-play';
     } else {
         // Matikan semua ikon lain
         document.querySelectorAll('.btn-ayah-action .fa-pause').forEach(i => i.className = 'fas fa-play');
         document.querySelectorAll('.ayah-item').forEach(el => el.classList.remove('playing'));
         
-        // Cek jika butuh ganti source
-        if (activeAyahIndex !== idx || audioEngine.src !== audioUrl) {
-            audioEngine.src = audioUrl;
-        }
+        // Ganti source jika perlu
+        if (activeAyahIndex !== idx || audioEngine.src !== audioUrl) audioEngine.src = audioUrl;
         
-        audioEngine.play(); 
-        activeAyahIndex = idx; 
-        icon.className = 'fas fa-pause';
-        
+        audioEngine.play(); activeAyahIndex = idx; icon.className = 'fas fa-pause';
         const card = document.getElementById(`ayah-${idx}`);
-        card.classList.add('playing'); 
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('playing'); card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
@@ -197,12 +190,12 @@ function toggleFeature() {
 }
 function savePrefs() { localStorage.setItem('rPrefs', JSON.stringify(prefs)); }
 function loadPrefsUI() {
-    document.getElementById('qari-selector').value = prefs.qari; document.getElementById('toggle-latin').checked = prefs.showLatin; document.getElementById('toggle-trans').checked = prefs.showTrans; document.getElementById('toggle-tajwid').checked = prefs.showTajwid; document.getElementById('toggle-autoplay').checked = prefs.autoplay;
+    document.getElementById('qari-selector').value = prefs.qari; document.getElementById('font-selector').value = prefs.arabFamily || "'Amiri', serif"; document.getElementById('toggle-latin').checked = prefs.showLatin; document.getElementById('toggle-trans').checked = prefs.showTrans; document.getElementById('toggle-tajwid').checked = prefs.showTajwid; document.getElementById('toggle-autoplay').checked = prefs.autoplay;
 }
 
-// --- JADWAL SHOLAT & COUNTDOWN ---
+// --- BUG FIX: REAL PRAYER TIMES ALADHAN API FIXED ---
 function getLocationAndPrayerTimes() {
-    const container = document.getElementById('prayer-times');
+    const prayerContainer = document.getElementById('prayer-times');
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const lat = pos.coords.latitude; const lng = pos.coords.longitude;
@@ -211,14 +204,16 @@ function getLocationAndPrayerTimes() {
                 document.getElementById('location-text').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${(await geoRes.json()).address.city || "Lokasi Anda"}`;
                 const d = new Date(); const dateStr = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
                 const t = (await (await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lng}&method=2`)).json()).data.timings;
-                renderRealPrayerTimes(t, container);
-                startPrayerCountdown(t); // Mulai countdown
-            } catch (err) { fetchFallbackPrayer(container); }
-        }, () => { fetchFallbackPrayer(container); });
+                renderRealPrayerTimes(t, prayerContainer);
+                renderRealPrayerTimes(t, document.getElementById('prayer-times-modal')); // Copy for modal
+                startPrayerCountdown(t);
+            } catch (err) { fetchFallbackPrayer(prayerContainer); }
+        }, () => { fetchFallbackPrayer(prayerContainer); });
     } else { fetchFallbackPrayer(container); }
 }
 
 function renderRealPrayerTimes(t, container) {
+    if(!container) return;
     const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
     const list = [{n: "Subuh", t: t.Fajr}, {n: "Dzuhur", t: t.Dhuhr}, {n: "Ashar", t: t.Asr}, {n: "Maghrib", t: t.Maghrib}, {n: "Isya", t: t.Isha}];
     container.innerHTML = list.map(p => {
@@ -227,35 +222,25 @@ function renderRealPrayerTimes(t, container) {
         return `<div class="${isActive} p-2 border-radius"><small>${p.n}</small><br><strong class="font-bold">${p.t}</strong></div>`;
     }).join('');
 }
-function fetchFallbackPrayer(container) { container.innerHTML = `<div class="bg-light p-2 border-radius"><small>Subuh</small><br><strong>04:30</strong></div><div class="bg-light p-2 border-radius"><small>Dzuhur</small><br><strong>12:00</strong></div><div class="bg-light p-2 border-radius"><small>Ashar</small><br><strong>15:15</strong></div><div class="bg-primary text-white p-2 border-radius"><small>Maghrib</small><br><strong>18:12</strong></div><div class="bg-light p-2 border-radius"><small>Isya</small><br><strong>19:20</strong></div>`; }
+function fetchFallbackPrayer(container) { container.innerHTML = `<div class="prayer-times-grid text-center"><div class="bg-light p-2 border-radius"><small>Subuh</small><br><strong class="font-bold">04:30</strong></div><div class="bg-light p-2 border-radius"><small>Dzuhur</small><br><strong class="font-bold">12:00</strong></div><div class="bg-light p-2 border-radius"><small>Ashar</small><br><strong class="font-bold">15:15</strong></div><div class="bg-primary text-white p-2 border-radius"><small>Maghrib</small><br><strong class="font-bold">18:12</strong></div><div class="bg-light p-2 border-radius"><small>Isya</small><br><strong class="font-bold">19:20</strong></div></div>`; }
 
 function startPrayerCountdown(timings) {
     setInterval(() => {
         const now = new Date();
         const nowMin = now.getHours() * 60 + now.getMinutes();
-        let nextName = "Subuh", nextTime = timings.Fajr;
-        
         const list = [{n: "Subuh", t: timings.Fajr}, {n: "Dzuhur", t: timings.Dhuhr}, {n: "Ashar", t: timings.Asr}, {n: "Maghrib", t: timings.Maghrib}, {n: "Isya", t: timings.Isha}];
+        let nextName = "Subuh", nextTime = list[0].t;
         for(let p of list) {
             const pMin = parseInt(p.t.split(':')[0])*60 + parseInt(p.t.split(':')[1]);
             if(pMin > nowMin) { nextName = p.n; nextTime = p.t; break; }
         }
-
-        // Kalkulasi sisa waktu (Sederhana)
         let [nH, nM] = nextTime.split(':').map(Number);
         let target = new Date(); target.setHours(nH, nM, 0);
-        if(target < now) target.setDate(target.getDate() + 1); // Besoknya
-        
+        if(target < now) target.setDate(target.getDate() + 1);
         let diff = target - now;
         let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
         let m = Math.floor((diff / 1000 / 60) % 60);
         let s = Math.floor((diff / 1000) % 60);
-        
         document.getElementById('header-countdown').innerHTML = `<i class="fas fa-clock"></i> Menuju ${nextName}: ${h}j ${m}m ${s}s`;
     }, 1000);
-}
-
-function renderCalGrid() {
-    document.getElementById('cal-month-year').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { month: 'long', year: 'numeric' }).format(new Date());
-    document.getElementById('cal-grid').innerHTML = Array.from({length: 30}, (_, i) => `<div class="cal-day ${i+1 === parseInt(new Intl.DateTimeFormat('en-US-u-ca-islamic', { day: 'numeric' }).format(new Date())) ? 'today' : ''}">${i+1}</div>`).join('');
 }
