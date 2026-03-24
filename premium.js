@@ -23,7 +23,6 @@ window.openWallpaperCreator = function(idx) {
     window.openModal('modal-wallpaper');
 };
 
-// --- FIX TAFSIR KEMENAG (BUG BUKU) ---
 window.openTafsirPerAyat = async function(surahNo, ayahNo) {
     document.getElementById('tafsir-content').innerHTML = `<div class="text-center"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:30px;"></i><p class="mt-2">Mengambil Tafsir...</p></div>`;
     window.openModal('modal-tafsir');
@@ -47,9 +46,12 @@ window.initMediaSession = function() {
 
 window.updateMediaSession = function(idx) {
     if ('mediaSession' in navigator && window.currentSurah) {
+        const qariNames = { "01": "Mahmoud Khalil Al-Husary", "02": "Abdul Muhsir Al-Qasim", "03": "Abdurrahman As-Sudais", "04": "Ibrahim Al-Dawsari", "05": "Mishary Rashid Alafasy" };
+        const artistName = qariNames[window.prefs.qari] || "Mishary Rashid Alafasy";
+        
         navigator.mediaSession.metadata = new MediaMetadata({
             title: `Q.S ${window.currentSurah.namaLatin} : ${window.currentSurah.ayat[idx].nomorAyat}`,
-            artist: 'Syekh Mishary Rashid',
+            artist: artistName,
             album: 'Rifqy Al-Quran',
             artwork: [{ src: 'https://equran.id/favicon.png', sizes: '512x512', type: 'image/png' }]
         });
