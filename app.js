@@ -1,22 +1,19 @@
 const API_QURAN = "https://equran.id/api/v2";
 let allSurahs = [], currentSurah = null, audioEngine = document.getElementById('audio-engine'), activeAyahIndex = -1;
-
-// STATE
 let prefs = JSON.parse(localStorage.getItem('rPrefs')) || { qari: "05", arabSize: 32, latinSize: 14, showLatin: true, showTrans: true, showTajwid: true, autoplay: true };
 let bookmark = JSON.parse(localStorage.getItem('rBookmark')) || null;
 let autoScrollInterval = null; let scrollSpeed = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    fixDateDisplay(); fetchSurahs(); loadPrefsUI(); checkBookmark(); checkDirectLink(); getLocationAndPrayerTimes();
+    fixDateDisplay(); fetchSurahs(); loadPrefsUI(); checkBookmark(); checkDirectLink(); getLocationAndPrayerTimes(); renderCalGrid();
 });
 
 function fixDateDisplay() {
     const today = new Date();
-    document.getElementById('date-greg').innerText = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     try {
         let hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(today);
-        document.getElementById('date-hijri').innerHTML = `${hijriStr.replace(/SM|AH/g, '').trim()} H <i class="fas fa-calendar-alt small"></i>`;
-    } catch(e) { document.getElementById('date-hijri').innerHTML = `Memuat Hijriah... <i class="fas fa-calendar-alt small"></i>`; }
+        document.getElementById('header-hijri').innerHTML = `${hijriStr.replace(/SM|AH/g, '').trim()} H`;
+    } catch(e) { document.getElementById('header-hijri').innerHTML = `1447 H`; }
 }
 
 function switchPage(pageId) {
@@ -25,7 +22,6 @@ function switchPage(pageId) {
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     
     if(pageId === 'page-home') { document.getElementById('nav-home-mob')?.classList.add('active'); document.getElementById('nav-home-desk')?.classList.add('active'); }
-    
     if(pageId !== 'page-read') {
         audioEngine.pause(); scrollSpeed = 0; clearInterval(autoScrollInterval);
         if(document.getElementById('btn-autoscroll-txt')) document.getElementById('btn-autoscroll-txt').innerText = "Off";
@@ -33,7 +29,7 @@ function switchPage(pageId) {
     window.scrollTo(0,0);
 }
 
-// FETCH & RENDER SURAH
+// --- FETCH & SEARCH QURAN ---
 async function fetchSurahs() {
     try {
         const res = await fetch(`${API_QURAN}/surat`); allSurahs = (await res.json()).data; renderSurahs(allSurahs);
@@ -63,7 +59,19 @@ function filterSurah() {
     else renderSurahs(allSurahs.filter(s => s.namaLatin.toLowerCase().includes(q) || s.arti.toLowerCase().includes(q)));
 }
 
-// BUKA SURAH & RENDER AYAT
+// --- BUG FIX: DIRECT LINK SHARE ---
+function checkDirectLink() {
+    const p = new URLSearchParams(window.location.search);
+    const surahP = p.get('surah');
+    const ayahP = p.get('ayah');
+    if(surahP) {
+        openSurah(parseInt(surahP), ayahP ? parseInt(ayahP) : 1);
+        // Hapus parameter URL agar tidak nyangkut saat kembali ke beranda!
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+// --- BUKA SURAH & RENDER AYAT ---
 async function openSurah(nomor, targetAyah = 1) {
     switchPage('page-read');
     document.getElementById('ayah-list').innerHTML = `<div class="text-center mt-3"><i class="fas fa-spinner fa-spin text-primary"></i> Memuat...</div>`;
@@ -107,50 +115,46 @@ async function openSurah(nomor, targetAyah = 1) {
     } catch(e) { alert("Gagal memuat."); switchPage('page-home'); }
 }
 
-function applyTajwid(t) {
-    return t.replace(/([نم])[\u0651]/g, `<span class="t-rule tj-ghunnah" onclick="showTajwidInfo('Ghunnah', '$&')">$&</span>`)
-            .replace(/([بجدطق])\u0652/g, `<span class="t-rule tj-qalqalah" onclick="showTajwidInfo('Qalqalah', '$&')">$&</span>`)
-            .replace(/[\u0653]/g, `<span class="t-rule tj-mad" onclick="showTajwidInfo('Mad/Panjang', '$&')">$&</span>`)
-            .replace(/[\u06E2]/g, `<span class="t-rule tj-iqlab" onclick="showTajwidInfo('Iqlab', '$&')">$&</span>`)
-            .replace(/[\u064B\u064C\u064D]/g, `<span class="t-rule tj-ikhfa" onclick="showTajwidInfo('Ikhfa/Idgham', '$&')">$&</span>`);
-}
-
-function checkDirectLink() {
-    const p = new URLSearchParams(window.location.search);
-    if(p.get('surah')) openSurah(parseInt(p.get('surah')), p.get('ayah') ? parseInt(p.get('ayah')) : 1);
-}
-
-// AUDIO ENGINE
+// --- BUG FIX: AUDIO PLAY/PAUSE LOGIC ---
 function playAyah(idx) {
-    document.querySelectorAll('.btn-ayah-action .fa-pause').forEach(i => i.className = 'fas fa-play');
-    document.querySelectorAll('.ayah-item').forEach(el => el.classList.remove('playing'));
     const icon = document.getElementById(`icon-play-${idx}`);
     const audioUrl = currentSurah.ayat[idx].audio[prefs.qari];
 
     if (activeAyahIndex === idx && !audioEngine.paused) {
-        audioEngine.pause(); icon.className = 'fas fa-play';
+        audioEngine.pause(); 
+        icon.className = 'fas fa-play';
     } else {
-        if (activeAyahIndex !== idx || audioEngine.src !== audioUrl) audioEngine.src = audioUrl;
-        audioEngine.play(); activeAyahIndex = idx; icon.className = 'fas fa-pause';
+        // Matikan semua ikon lain
+        document.querySelectorAll('.btn-ayah-action .fa-pause').forEach(i => i.className = 'fas fa-play');
+        document.querySelectorAll('.ayah-item').forEach(el => el.classList.remove('playing'));
+        
+        // Cek jika butuh ganti source
+        if (activeAyahIndex !== idx || audioEngine.src !== audioUrl) {
+            audioEngine.src = audioUrl;
+        }
+        
+        audioEngine.play(); 
+        activeAyahIndex = idx; 
+        icon.className = 'fas fa-pause';
+        
         const card = document.getElementById(`ayah-${idx}`);
-        card.classList.add('playing'); card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('playing'); 
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
 audioEngine.addEventListener('ended', () => {
-    document.getElementById(`icon-play-${activeAyahIndex}`).className = 'fas fa-play';
+    const currentIcon = document.getElementById(`icon-play-${activeAyahIndex}`);
+    if(currentIcon) currentIcon.className = 'fas fa-play';
     if (prefs.autoplay && currentSurah && activeAyahIndex < currentSurah.ayat.length - 1) playAyah(activeAyahIndex + 1);
 });
 
-// BOOKMARK & PROGRESS
+// --- BOOKMARK & SHARE ---
 function bookmarkAyah(sNo, aNo, sName, btnEl, totalAyah) {
     bookmark = { sNo, sName, aNo }; localStorage.setItem('rBookmark', JSON.stringify(bookmark));
     document.querySelectorAll('.btn-bookmark').forEach(btn => btn.classList.remove('active')); btnEl.classList.add('active');
-    
     let progData = JSON.parse(localStorage.getItem('surahProgress')) || {};
-    progData[sNo] = Math.round((aNo / totalAyah) * 100);
-    localStorage.setItem('surahProgress', JSON.stringify(progData));
-    
+    progData[sNo] = Math.round((aNo / totalAyah) * 100); localStorage.setItem('surahProgress', JSON.stringify(progData));
     alert(`Berhasil ditandai: Surat ${sName} Ayat ${aNo}`); checkBookmark();
 }
 
@@ -167,25 +171,15 @@ function shareAyah(sNo, aNo, teksArab, teksIndo) {
     if (navigator.share) navigator.share({ title: 'Rifqy Quran', text: textToShare }); else { navigator.clipboard.writeText(textToShare); alert("Teks & Link disalin!"); }
 }
 
-// AUTO SCROLL
-function toggleAutoScroll() {
-    scrollSpeed++; if(scrollSpeed > 3) scrollSpeed = 0;
-    clearInterval(autoScrollInterval); const btn = document.getElementById('btn-autoscroll-txt');
-    if(scrollSpeed === 0) btn.innerText = "Off"; 
-    else { btn.innerText = `${scrollSpeed}x`; autoScrollInterval = setInterval(() => { window.scrollBy(0, scrollSpeed); }, 30); }
-}
-
-// MODAL CONTROLS
+// --- MODALS & SETTINGS ---
 function openModal(id) { document.getElementById(id).style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-function openSettingsModal() { openModal('modal-settings'); }
 function openTafsirModal() {
     if(!currentSurah) return;
     document.getElementById('tafsir-content').innerHTML = currentSurah.deskripsi;
     openModal('modal-tafsir');
 }
 
-// SETTINGS LOGIC
 function changeQari() { 
     prefs.qari = document.getElementById('qari-selector').value; savePrefs(); 
     if(currentSurah && activeAyahIndex >= 0 && !audioEngine.paused) { audioEngine.src = currentSurah.ayat[activeAyahIndex].audio[prefs.qari]; audioEngine.play(); }
@@ -196,64 +190,72 @@ function updateFont(type, val) {
     savePrefs();
 }
 function toggleFeature() {
-    prefs.showLatin = document.getElementById('toggle-latin').checked;
-    prefs.showTrans = document.getElementById('toggle-trans').checked;
-    prefs.showTajwid = document.getElementById('toggle-tajwid').checked;
-    prefs.autoplay = document.getElementById('toggle-autoplay').checked;
-    document.querySelectorAll('.box-latin').forEach(e => e.classList.toggle('hidden', !prefs.showLatin));
-    document.querySelectorAll('.box-trans').forEach(e => e.classList.toggle('hidden', !prefs.showTrans));
+    prefs.showLatin = document.getElementById('toggle-latin').checked; prefs.showTrans = document.getElementById('toggle-trans').checked; prefs.showTajwid = document.getElementById('toggle-tajwid').checked; prefs.autoplay = document.getElementById('toggle-autoplay').checked;
+    document.querySelectorAll('.box-latin').forEach(e => e.classList.toggle('hidden', !prefs.showLatin)); document.querySelectorAll('.box-trans').forEach(e => e.classList.toggle('hidden', !prefs.showTrans));
     savePrefs();
-    if(currentSurah) {
-        currentSurah.ayat.forEach((a, i) => { const el = document.querySelector(`#ayah-${i} .text-arab`); if(el) el.innerHTML = prefs.showTajwid ? applyTajwid(a.teksArab) : a.teksArab; });
-    }
+    if(currentSurah) { currentSurah.ayat.forEach((a, i) => { const el = document.querySelector(`#ayah-${i} .text-arab`); if(el) el.innerHTML = prefs.showTajwid ? applyTajwid(a.teksArab) : a.teksArab; }); }
 }
 function savePrefs() { localStorage.setItem('rPrefs', JSON.stringify(prefs)); }
 function loadPrefsUI() {
-    document.getElementById('qari-selector').value = prefs.qari;
-    document.getElementById('toggle-latin').checked = prefs.showLatin;
-    document.getElementById('toggle-trans').checked = prefs.showTrans;
-    document.getElementById('toggle-tajwid').checked = prefs.showTajwid;
-    document.getElementById('toggle-autoplay').checked = prefs.autoplay;
+    document.getElementById('qari-selector').value = prefs.qari; document.getElementById('toggle-latin').checked = prefs.showLatin; document.getElementById('toggle-trans').checked = prefs.showTrans; document.getElementById('toggle-tajwid').checked = prefs.showTajwid; document.getElementById('toggle-autoplay').checked = prefs.autoplay;
 }
 
-// REAL PRAYER TIMES ALADHAN API
+// --- JADWAL SHOLAT & COUNTDOWN ---
 function getLocationAndPrayerTimes() {
-    const prayerContainer = document.getElementById('prayer-times');
-    const locationText = document.getElementById('location-text');
+    const container = document.getElementById('prayer-times');
     if (navigator.geolocation) {
-        locationText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mencari...`;
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const lat = position.coords.latitude; const lng = position.coords.longitude;
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude; const lng = pos.coords.longitude;
             try {
                 const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-                const geoData = await geoRes.json();
-                locationText.innerHTML = `<i class="fas fa-map-marker-alt"></i> ${geoData.address.city || geoData.address.town || "Lokasi Anda"}`;
-                
+                document.getElementById('location-text').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${(await geoRes.json()).address.city || "Lokasi Anda"}`;
                 const d = new Date(); const dateStr = `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
-                const prayerRes = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lng}&method=2`);
-                const t = (await prayerRes.json()).data.timings;
-                renderRealPrayerTimes(t, prayerContainer);
-                renderRealPrayerTimes(t, document.getElementById('prayer-times-modal')); // Copy for modal
-            } catch (err) { locationText.innerText = "Gagal memuat jadwal."; }
-        }, () => { locationText.innerText = "Gunakan Default (Jakarta)"; fetchFallbackPrayer(prayerContainer); });
-    } else { locationText.innerText = "Tidak didukung."; }
+                const t = (await (await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lng}&method=2`)).json()).data.timings;
+                renderRealPrayerTimes(t, container);
+                startPrayerCountdown(t); // Mulai countdown
+            } catch (err) { fetchFallbackPrayer(container); }
+        }, () => { fetchFallbackPrayer(container); });
+    } else { fetchFallbackPrayer(container); }
 }
 
 function renderRealPrayerTimes(t, container) {
-    if(!container) return;
     const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
     const list = [{n: "Subuh", t: t.Fajr}, {n: "Dzuhur", t: t.Dhuhr}, {n: "Ashar", t: t.Asr}, {n: "Maghrib", t: t.Maghrib}, {n: "Isya", t: t.Isha}];
-    
-    container.innerHTML = `
-        <div class="prayer-times-grid text-center w-100">
-            ${list.map(p => {
-                const pMin = parseInt(p.t.split(':')[0])*60 + parseInt(p.t.split(':')[1]);
-                const isActive = (pMin > nowMin) ? 'bg-primary text-white' : 'bg-light';
-                return `<div class="${isActive} p-2 border-radius"><small>${p.n}</small><br><strong class="font-bold">${p.t}</strong></div>`;
-            }).join('')}
-        </div>
-    `;
+    container.innerHTML = list.map(p => {
+        const pMin = parseInt(p.t.split(':')[0])*60 + parseInt(p.t.split(':')[1]);
+        const isActive = (pMin > nowMin) ? 'bg-primary text-white' : 'bg-light';
+        return `<div class="${isActive} p-2 border-radius"><small>${p.n}</small><br><strong class="font-bold">${p.t}</strong></div>`;
+    }).join('');
 }
-function fetchFallbackPrayer(container) {
-    container.innerHTML = `<div class="prayer-times-grid text-center"><div class="bg-light p-2 border-radius"><small>Subuh</small><br><strong class="font-bold">04:30</strong></div><div class="bg-light p-2 border-radius"><small>Dzuhur</small><br><strong class="font-bold">12:00</strong></div><div class="bg-light p-2 border-radius"><small>Ashar</small><br><strong class="font-bold">15:15</strong></div><div class="bg-primary text-white p-2 border-radius"><small>Maghrib</small><br><strong class="font-bold">18:12</strong></div><div class="bg-light p-2 border-radius"><small>Isya</small><br><strong class="font-bold">19:20</strong></div></div>`;
+function fetchFallbackPrayer(container) { container.innerHTML = `<div class="bg-light p-2 border-radius"><small>Subuh</small><br><strong>04:30</strong></div><div class="bg-light p-2 border-radius"><small>Dzuhur</small><br><strong>12:00</strong></div><div class="bg-light p-2 border-radius"><small>Ashar</small><br><strong>15:15</strong></div><div class="bg-primary text-white p-2 border-radius"><small>Maghrib</small><br><strong>18:12</strong></div><div class="bg-light p-2 border-radius"><small>Isya</small><br><strong>19:20</strong></div>`; }
+
+function startPrayerCountdown(timings) {
+    setInterval(() => {
+        const now = new Date();
+        const nowMin = now.getHours() * 60 + now.getMinutes();
+        let nextName = "Subuh", nextTime = timings.Fajr;
+        
+        const list = [{n: "Subuh", t: timings.Fajr}, {n: "Dzuhur", t: timings.Dhuhr}, {n: "Ashar", t: timings.Asr}, {n: "Maghrib", t: timings.Maghrib}, {n: "Isya", t: timings.Isha}];
+        for(let p of list) {
+            const pMin = parseInt(p.t.split(':')[0])*60 + parseInt(p.t.split(':')[1]);
+            if(pMin > nowMin) { nextName = p.n; nextTime = p.t; break; }
+        }
+
+        // Kalkulasi sisa waktu (Sederhana)
+        let [nH, nM] = nextTime.split(':').map(Number);
+        let target = new Date(); target.setHours(nH, nM, 0);
+        if(target < now) target.setDate(target.getDate() + 1); // Besoknya
+        
+        let diff = target - now;
+        let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        let m = Math.floor((diff / 1000 / 60) % 60);
+        let s = Math.floor((diff / 1000) % 60);
+        
+        document.getElementById('header-countdown').innerHTML = `<i class="fas fa-clock"></i> Menuju ${nextName}: ${h}j ${m}m ${s}s`;
+    }, 1000);
+}
+
+function renderCalGrid() {
+    document.getElementById('cal-month-year').innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { month: 'long', year: 'numeric' }).format(new Date());
+    document.getElementById('cal-grid').innerHTML = Array.from({length: 30}, (_, i) => `<div class="cal-day ${i+1 === parseInt(new Intl.DateTimeFormat('en-US-u-ca-islamic', { day: 'numeric' }).format(new Date())) ? 'today' : ''}">${i+1}</div>`).join('');
 }
