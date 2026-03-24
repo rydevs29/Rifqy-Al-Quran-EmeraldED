@@ -1,135 +1,83 @@
 /* ==============================================================
-   TAJWID.JS - 14 HUKUM LENGKAP (SESUAI UI QARI.MY.ID)
+   TAJWID.JS - 14 HUKUM TAJWID DATABASE & REGEX
    ============================================================== */
 
 const tajwidDatabase = [
-    { id: "Hamzah Wasl", arab: "هَمْزَةُ الْوَصْلِ", color: "#9ca3af", class: "tj-hamzah",
-      penjelasan: "Hamzah Wasl adalah hamzah yang dibaca di awal kata saat memulai bacaan, tetapi tidak dibaca ketika menyambung dari kata sebelumnya.",
-      cara: "Jika memulai bacaan dari hamzah wasl, baca dengan harakat yang sesuai. Jika menyambung dari kata sebelumnya, hamzah ini tidak dibaca.",
-      contoh: "ٱلْحَمْدُ - Alif-lam di awal tidak dibaca jika menyambung" },
-    { id: "Idgham Syamsiyah", arab: "لَام شَمْسِيَّة", color: "#3b82f6", class: "tj-idgham_syam",
-      penjelasan: "Lam Syamsiyah terjadi ketika huruf lam pada 'ال' bertemu dengan salah satu dari 14 huruf syamsiyah. Lam tidak dibaca dan huruf setelahnya dibaca dengan tasydid.",
-      cara: "Tidak membunyikan huruf lam, langsung membaca huruf setelahnya dengan tasydid (penekanan ganda).",
-      contoh: "الشَّمْسُ - dibaca 'asy-syams' bukan 'al-syams'" },
-    { id: "Ghunnah (Dengung)", arab: "غُنَّة", color: "#f97316", class: "tj-ghunnah",
-      penjelasan: "Ghunnah adalah dengung yang keluar dari pangkal hidung. Panjangnya sekitar 2 harakat. Ghunnah muncul pada nun dan mim yang bertasydid.",
-      cara: "Keluarkan suara dengung dari hidung selama 2 harakat sambil mulut tertutup untuk mim atau terbuka sesuai harakat untuk nun.",
-      contoh: "إِنَّ - nun bertasydid, dengungkan selama 2 ketukan" },
-    { id: "Ikhfa", arab: "إِخْفَاء حَقِيقِي", color: "#ec4899", class: "tj-ikhfa",
-      penjelasan: "Ikhfa Haqiqi terjadi ketika nun mati atau tanwin bertemu dengan 15 huruf ikhfa. Bacaannya disamarkan antara izhar dan idgham dengan disertai ghunnah.",
-      cara: "Bacaan nun/tanwin disamarkan (tidak jelas) dengan disertai dengung 2 harakat. Lidah diposisikan mendekati makhraj huruf setelahnya.",
-      contoh: "مِنْ قَبْلُ - nun mati bertemu qaf, samarkan dengan ghunnah" },
-    { id: "Madd (Panjang)", arab: "مَدّ", color: "#ef4444", class: "tj-mad",
-      penjelasan: "Madd adalah pemanjangan suara pada huruf mad (ا و ي). Panjangnya bervariasi dari 2 hingga 6 harakat tergantung jenis madd-nya.",
-      cara: "Panjangkan suara pada huruf mad sesuai dengan jenis madd-nya. Thabi'i = 2 harakat, Wajib/Jaiz = 4-5 harakat, Lazim = 6 harakat.",
-      contoh: "قَالُوْا - alif setelah qaf, panjangkan 2 harakat" },
-    { id: "Qalqalah", arab: "قَلْقَلَة", color: "#10b981", class: "tj-qalqalah",
-      penjelasan: "Qalqalah adalah pantulan suara yang terjadi pada 5 huruf qalqalah (ق ط ب ج د) ketika huruf tersebut mati atau berhenti.",
-      cara: "Bunyikan huruf dengan pantulan atau getaran pendek dari makhrajnya. Qalqalah di akhir ayat (Kubra) lebih kuat dari di tengah kata (Sughra).",
-      contoh: "يَخْلُقُ - qaf mati di akhir, beri pantulan 'qo'" },
-    { id: "Iqlab", arab: "إِقْلَاب", color: "#8b5cf6", class: "tj-iqlab",
-      penjelasan: "Iqlab terjadi ketika nun mati atau tanwin bertemu dengan huruf ba (ب). Nun/tanwin diubah menjadi bunyi mim dan dibaca ikhfa (samar) dengan ghunnah.",
-      cara: "Ubah bunyi nun/tanwin menjadi mim, lalu samarkan bacaannya dengan dengung 2 harakat sebelum huruf ba.",
-      contoh: "مِنْ بَعْدِ - dibaca 'mim ba\\'di' dengan ghunnah" },
-    { id: "Idgham", arab: "إِدْغَام", color: "#06b6d4", class: "tj-idgham",
-      penjelasan: "Idgham adalah memasukkan bunyi nun mati/tanwin ke dalam huruf setelahnya sehingga menjadi satu bunyi. Terdiri dari Bi Ghunnah (dengung) dan Bila Ghunnah (tanpa dengung).",
-      cara: "Masukkan nun/tanwin ke huruf berikutnya dengan dengung 2 harakat (untuk Ya, Nun, Mim, Waw). Untuk Lam dan Ra langsung tanpa dengung.",
-      contoh: "مَنْ يَقُوْلُ - nun masuk ke ya dengan ghunnah" },
-    { id: "Ikhfa Syafawi", arab: "إِخْفَاء شَفَوِي", color: "#d946ef", class: "tj-ikhfa_syaf",
-      penjelasan: "Ikhfa Syafawi terjadi ketika mim mati (مْ) bertemu dengan huruf ba (ب). Mim disembunyikan (disamarkan) dengan bibir hampir tertutup disertai ghunnah.",
-      cara: "Rapatkan bibir tapi jangan sampai menempel sempurna, keluarkan suara dengung dari hidung selama 2 harakat.",
-      contoh: "تَرْمِيهِمْ بِحِجَارَةٍ - mim mati bertemu ba, samarkan dengan ghunnah" },
-    { id: "Saktah (Berhenti Sejenak)", arab: "سَكْتَة", color: "#64748b", class: "tj-saktah",
-      penjelasan: "Saktah adalah berhenti sejenak tanpa bernapas (sekitar 2 harakat) di tempat-tempat tertentu dalam Al-Quran (Riwayat Hafs).",
-      cara: "Berhenti sejenak tanpa mengambil napas, cukup potong suara sesaat kemudian lanjutkan bacaan.",
-      contoh: "عِوَجًا ۜ قَيِّمًا - berhenti sejenak sebelum melanjutkan" },
-    { id: "Idgham Mutamatsilain", arab: "إِدْغَام مُتَمَاثِلَيْن", color: "#0ea5e9", class: "tj-mutamatsilain",
-      penjelasan: "Idgham Mutamatsilain (Idgham Mimi) terjadi ketika mim mati bertemu dengan mim berharakat. Mim pertama dimasukkan ke mim kedua.",
-      cara: "Masukkan mim pertama ke mim kedua secara sempurna, lalu dengungkan selama 2 harakat.",
-      contoh: "فِي قُلُوبِهِمْ مَرَضٌ - mim mati bertemu mim" },
-    { id: "Idgham Mutaqaribain", arab: "إِدْغَام مُتَقَارِبَيْن", color: "#14b8a6", class: "tj-mutaqaribain",
-      penjelasan: "Idgham Mutaqaribain terjadi ketika dua huruf yang berdekatan makhrajnya bertemu, sehingga huruf pertama dimasukkan ke huruf kedua (contoh Qaf+Kaf).",
-      cara: "Masukkan huruf pertama ke huruf kedua karena makhraj keduanya berdekatan.",
-      contoh: "أَلَمْ نَخْلُقْكُمْ - qaf masuk ke kaf" },
-    { id: "Idgham Mutajanisain", arab: "إِدْغَام مُتَجَانِسَيْن", color: "#6366f1", class: "tj-mutajanisain",
-      penjelasan: "Idgham Mutajanisain terjadi ketika dua huruf yang sama makhrajnya tetapi berbeda sifatnya bertemu.",
-      cara: "Masukkan huruf pertama ke huruf kedua secara sempurna karena makhraj keduanya sama.",
-      contoh: "قَدْ تَبَيَّنَ - dal masuk ke ta" },
-    { id: "Izhar (Jelas)", arab: "إِظْهَار حَلْقِي", color: "#eab308", class: "tj-idzhar",
-      penjelasan: "Izhar Halqi terjadi ketika nun mati atau tanwin bertemu dengan salah satu dari 6 huruf halqi (ء ه ع ح غ خ).",
-      cara: "Baca nun mati atau tanwin dengan jelas tanpa dengung. Langsung bunyikan huruf halqi setelahnya.",
-      contoh: "مِنْ عِنْدِ - nun mati bertemu ain, baca jelas" }
+    { id: "Hamzah Wasl", arab: "هَمْزَةُ الْوَصْلِ", color: "#9ca3af", class: "tj-hamzah", penjelasan: "Hamzah yang dibaca di awal kata saat memulai bacaan, tetapi tidak dibaca ketika menyambung dari kata sebelumnya.", cara: "Jika memulai bacaan dari hamzah wasl, baca dengan harakat yang sesuai. Jika menyambung, hamzah ini tidak dibaca.", contoh: "ٱلْحَمْدُ - Alif-lam di awal tidak dibaca jika menyambung" },
+    { id: "Idgham Syamsiyah", arab: "لَام شَمْسِيَّة", color: "#3b82f6", class: "tj-idgham-syam", penjelasan: "Lam Syamsiyah terjadi ketika huruf lam pada 'ال' bertemu huruf syamsiyah. Lam tidak dibaca dan huruf setelahnya ditasydidkan.", cara: "Tidak membunyikan huruf lam, langsung membaca huruf setelahnya dengan tasydid.", contoh: "الشَّمْسُ - dibaca 'asy-syams'" },
+    { id: "Ghunnah (Dengung)", arab: "غُنَّة", color: "#f97316", class: "tj-ghunnah", penjelasan: "Ghunnah adalah dengung dari pangkal hidung (2 harakat) pada nun dan mim bertasydid.", cara: "Keluarkan suara dengung dari hidung selama 2 harakat.", contoh: "إِنَّ - nun bertasydid, dengungkan 2 ketukan" },
+    { id: "Ikhfa", arab: "إِخْفَاء حَقِيقِي", color: "#ec4899", class: "tj-ikhfa", penjelasan: "Nun mati/tanwin bertemu 15 huruf ikhfa. Disamarkan antara izhar dan idgham disertai ghunnah.", cara: "Bacaan disamarkan dengan dengung 2 harakat.", contoh: "مِنْ قَبْلُ - samarkan dengan ghunnah" },
+    { id: "Madd (Panjang)", arab: "مَدّ", color: "#ef4444", class: "tj-mad", penjelasan: "Pemanjangan suara pada huruf mad (ا و ي) atau tanda bendera.", cara: "Panjangkan suara 2 hingga 6 harakat.", contoh: "قَالُوْا - panjangkan 2 harakat" },
+    { id: "Qalqalah", arab: "قَلْقَلَة", color: "#10b981", class: "tj-qalqalah", penjelasan: "Pantulan suara pada huruf (ق ط ب ج د) ketika sukun/berhenti.", cara: "Bunyikan huruf dengan pantulan dari makhrajnya.", contoh: "يَخْلُقُ - pantulan 'qo'" },
+    { id: "Iqlab", arab: "إِقْلَاب", color: "#8b5cf6", class: "tj-iqlab", penjelasan: "Nun mati/tanwin bertemu ba (ب). Diubah menjadi mim dan dibaca samar dengan ghunnah.", cara: "Ubah bunyi menjadi mim, samarkan dengan dengung.", contoh: "مِنْ بَعْدِ - dibaca 'mim ba'di'" },
+    { id: "Idgham", arab: "إِدْغَام", color: "#06b6d4", class: "tj-idgham", penjelasan: "Memasukkan bunyi nun mati/tanwin ke huruf setelahnya (Bighunnah & Bilaghunnah).", cara: "Masukkan ke huruf berikutnya dengan atau tanpa dengung.", contoh: "مَنْ يَقُوْلُ - masuk ke ya dengan ghunnah" },
+    { id: "Ikhfa Syafawi", arab: "إِخْفَاء شَفَوِي", color: "#d946ef", class: "tj-ikhfa-syaf", penjelasan: "Mim mati (مْ) bertemu huruf ba (ب). Disembunyikan dengan bibir hampir tertutup.", cara: "Rapatkan bibir tapi jangan menempel sempurna, dengungkan 2 harakat.", contoh: "تَرْمِيهِمْ بِحِجَارَةٍ - mim mati bertemu ba" },
+    { id: "Saktah", arab: "سَكْتَة", color: "#64748b", class: "tj-saktah", penjelasan: "Berhenti sejenak tanpa bernapas (2 harakat) di tempat tertentu (Hafs).", cara: "Berhenti sejenak tanpa mengambil napas.", contoh: "عِوَجًا ۜ قَيِّمًا - berhenti sejenak" },
+    { id: "Idgham Mutamatsilain", arab: "إِدْغَام مُتَمَاثِلَيْن", color: "#0ea5e9", class: "tj-mutamatsilain", penjelasan: "Mim mati bertemu mim berharakat. Dimasukkan dengan sempurna disertai ghunnah.", cara: "Masukkan mim pertama ke mim kedua, dengungkan 2 harakat.", contoh: "فِي قُلُوبِهِمْ مَرَضٌ - mim mati bertemu mim" },
+    { id: "Idgham Mutaqaribain", arab: "إِدْغَام مُتَقَارِبَيْن", color: "#14b8a6", class: "tj-mutaqaribain", penjelasan: "Dua huruf berdekatan makhraj bertemu, huruf pertama masuk ke kedua.", cara: "Masukkan huruf pertama ke huruf kedua.", contoh: "أَلَمْ نَخْلُقْكُمْ - qaf masuk ke kaf" },
+    { id: "Idgham Mutajanisain", arab: "إِدْغَام مُتَجَانِسَيْن", color: "#6366f1", class: "tj-mutajanisain", penjelasan: "Dua huruf sama makhraj tetapi beda sifat bertemu.", cara: "Masukkan huruf pertama ke kedua secara sempurna.", contoh: "قَدْ تَبَيَّنَ - dal masuk ke ta" },
+    { id: "Izhar (Jelas)", arab: "إِظْهَار حَلْقِي", color: "#eab308", class: "tj-idzhar", penjelasan: "Nun mati/tanwin bertemu 6 huruf halqi. Dibaca jelas tanpa ghunnah.", cara: "Baca nun/tanwin dengan jelas tanpa dengung.", contoh: "مِنْ عِنْدِ - baca jelas tanpa ghunnah" }
 ];
 
-document.addEventListener('DOMContentLoaded', () => { renderTajwidGuide(); });
-
 window.openTajwidGuide = function() {
-    document.getElementById('modal-tajwid-guide').style.display = 'flex';
-};
-
-function renderTajwidGuide() {
+    document.getElementById('modal-lainnya').style.display = 'none';
     const list = document.getElementById('tajwid-guide-list');
-    if(!list) return;
     list.innerHTML = tajwidDatabase.map((t, i) => `
-        <div class="tg-item" style="background:#1e293b; border-color:#334155; color:white;">
-            <div class="tg-header" onclick="toggleTG(${i})" style="color:white;">
-                <div class="tg-color-box" style="background-color: ${t.color}; color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:18px;">${t.id.charAt(0)}</div>
-                <div style="flex:1;">
-                    <div style="font-weight:bold; font-size:15px;">${t.id}</div>
-                    <div class="font-arab" style="font-size:14px; color:#94a3b8; font-weight:normal;">${t.arab}</div>
-                </div>
+        <div class="tg-item">
+            <div class="tg-header" onclick="toggleTG(${i})">
+                <div class="tg-color-box" style="background-color: ${t.color};">${t.id.charAt(0)}</div>
+                <div style="flex:1;"><div style="font-weight:bold; font-size:15px;">${t.id}</div><div class="font-arab" style="font-size:14px; color:#94a3b8;">${t.arab}</div></div>
                 <i class="fas fa-chevron-down" id="tg-icon-${i}"></i>
             </div>
-            <div class="tg-body" id="tg-body-${i}" style="color:#cbd5e1;">
+            <div class="tg-body" id="tg-body-${i}">
                 <div style="padding: 10px 0;">
-                    <div style="margin-bottom:15px;">
-                        <div class="t-section-title" style="color:#60a5fa;"><i class="fas fa-info-circle"></i> Penjelasan</div>
-                        <p style="font-size:13px; line-height:1.6;">${t.penjelasan}</p>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <div class="t-section-title" style="color:#fbbf24;"><i class="fas fa-lightbulb"></i> Cara Membaca</div>
-                        <p style="font-size:13px; line-height:1.6;">${t.cara}</p>
-                    </div>
-                    <div>
-                        <div class="t-section-title" style="color:#34d399;"><i class="fas fa-book-open"></i> Contoh</div>
-                        <p style="font-size:13px; line-height:1.6;"><span class="font-arab" style="font-size:18px;">${t.contoh.split(' - ')[0]}</span> - ${t.contoh.split(' - ')[1] || ''}</p>
-                    </div>
+                    <div class="t-section-title" style="color:#60a5fa;">Penjelasan</div><p class="mb-3">${t.penjelasan}</p>
+                    <div class="t-section-title" style="color:#fbbf24;">Cara Membaca</div><p class="mb-3">${t.cara}</p>
+                    <div class="t-section-title" style="color:#34d399;">Contoh</div><p><span class="font-arab" style="font-size:18px;">${t.contoh.split(' - ')[0]}</span> - ${t.contoh.split(' - ')[1] || ''}</p>
                 </div>
             </div>
         </div>`).join('');
-}
+    document.getElementById('modal-tajwid-guide').style.display = 'flex';
+};
 
-function toggleTG(idx) {
-    const b = document.getElementById(`tg-body-${idx}`); const c = document.getElementById(`tg-icon-${idx}`);
-    if(b.classList.contains('open')) { b.classList.remove('open'); c.classList.replace('fa-chevron-up', 'fa-chevron-down'); } 
-    else { b.classList.add('open'); c.classList.replace('fa-chevron-down', 'fa-chevron-up'); }
-}
-
-// --- FUNGSI MUNCULIN POPUP SAAT BACA AL-QURAN ---
 window.showTajwidInfo = function(jenis, huruf) {
     const tData = tajwidDatabase.find(t => t.id.includes(jenis) || jenis.includes(t.id)) || tajwidDatabase[0];
-    
     document.getElementById('t-info-icon').innerText = tData.id.charAt(0);
     document.getElementById('t-info-icon').style.backgroundColor = tData.color;
     document.getElementById('t-info-title').innerText = tData.id;
     document.getElementById('t-info-arab').innerText = tData.arab;
-    
     document.getElementById('t-info-desc').innerText = tData.penjelasan;
     document.getElementById('t-info-cara').innerText = tData.cara;
-    
     const contohParts = tData.contoh.split(' - ');
     document.getElementById('t-info-contoh').innerText = contohParts[0];
     document.getElementById('t-info-contoh-desc').innerText = contohParts[1] || '';
-    
     document.getElementById('t-info-letters').innerText = huruf;
     document.getElementById('modal-tajwid-info').style.display = 'flex';
 };
 
-// --- REGEX DETEKSI TAJWID PADA TEKS ARAB ---
+// Advanced Regex Approximation for 14 Tajwid rules in pure JS (Without API pre-parsed markings)
 window.applyTajwid = function(text) {
-    return text.replace(/([نم])[\u0651]/g, `<span class="t-rule tj-ghunnah" onclick="showTajwidInfo('Ghunnah', '$&')">$&</span>`)
-            .replace(/([بجدطق])\u0652/g, `<span class="t-rule tj-qalqalah" onclick="showTajwidInfo('Qalqalah', '$&')">$&</span>`)
-            .replace(/[\u0653]/g, `<span class="t-rule tj-mad" onclick="showTajwidInfo('Madd', '$&')">$&</span>`)
-            .replace(/[\u06E2]/g, `<span class="t-rule tj-iqlab" onclick="showTajwidInfo('Iqlab', '$&')">$&</span>`)
-            .replace(/[\u064B\u064C\u064D]/g, `<span class="t-rule tj-ikhfa" onclick="showTajwidInfo('Ikhfa', '$&')">$&</span>`);
+    return text
+        // 1. Ghunnah (Mim/Nun Tasydid)
+        .replace(/([نم])[\u0651]/g, `<span class="t-rule tj-ghunnah" onclick="showTajwidInfo('Ghunnah', '$&')">$&</span>`)
+        // 2. Qalqalah (Ba, Jim, Dal, Tha, Qaf sukun)
+        .replace(/([بجدطق])\u0652/g, `<span class="t-rule tj-qalqalah" onclick="showTajwidInfo('Qalqalah', '$&')">$&</span>`)
+        // 3. Mad (Tanda bendera/panjang)
+        .replace(/[\u0653]/g, `<span class="t-rule tj-mad" onclick="showTajwidInfo('Madd', '$&')">$&</span>`)
+        // 4. Iqlab (Mim kecil)
+        .replace(/[\u06E2]/g, `<span class="t-rule tj-iqlab" onclick="showTajwidInfo('Iqlab', '$&')">$&</span>`)
+        // 5. Ikhfa Syafawi (Mim mati ketemu Ba)
+        .replace(/مْ(?=\s*ب)/g, `<span class="t-rule tj-ikhfa-syaf" onclick="showTajwidInfo('Ikhfa Syafawi', '$&')">$&</span>`)
+        // 6. Idgham Mutamatsilain / Mimi (Mim mati ketemu Mim)
+        .replace(/مْ(?=\s*م)/g, `<span class="t-rule tj-mutamatsilain" onclick="showTajwidInfo('Idgham Mutamatsilain', '$&')">$&</span>`)
+        // 7. Idgham Bighunnah (Nun mati/Tanwin ketemu Ya, Nun, Mim, Waw)
+        .replace(/(نْ|[\u064B\u064C\u064D])(?=\s*[ينمو])/g, `<span class="t-rule tj-idgham" onclick="showTajwidInfo('Idgham', '$&')">$&</span>`)
+        // 8. Idgham Bilaghunnah (Nun mati/Tanwin ketemu Lam, Ra)
+        .replace(/(نْ|[\u064B\u064C\u064D])(?=\s*[لر])/g, `<span class="t-rule tj-idgham" onclick="showTajwidInfo('Idgham', '$&')">$&</span>`)
+        // 9. Ikhfa Haqiqi (Nun mati/Tanwin ketemu 15 huruf ikhfa)
+        .replace(/(نْ|[\u064B\u064C\u064D])(?=\s*[تثجدذزسشصضطظفقك])/g, `<span class="t-rule tj-ikhfa" onclick="showTajwidInfo('Ikhfa', '$&')">$&</span>`)
+        // 10. Idzhar Halqi (Nun mati/Tanwin ketemu huruf halqi)
+        .replace(/(نْ|[\u064B\u064C\u064D])(?=\s*[ءأإهعحغخ])/g, `<span class="t-rule tj-idzhar" onclick="showTajwidInfo('Izhar', '$&')">$&</span>`)
+        // 11. Idgham Syamsiyah (Alif Lam ketemu huruf Syamsiyah)
+        .replace(/ال(?=[تثدذرزسشصضطظلن][\u0651])/g, `<span class="t-rule tj-idgham-syam" onclick="showTajwidInfo('Idgham Syamsiyah', '$&')">$&</span>`);
 };
