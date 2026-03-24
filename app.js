@@ -1,5 +1,5 @@
 /* ==============================================================
-   APP.JS - CORE ENGINE (BUG FIXES: TOGGLES & TAFSIR SURAT)
+   APP.JS - CORE ENGINE (WAQAF & IBTIDA MANUAL)
    ============================================================== */
 
 window.API_QURAN = "https://equran.id/api/v2";
@@ -37,6 +37,7 @@ window.fixDateDisplay = function() {
     const today = new Date();
     const gregStr = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     if(document.getElementById('header-date')) document.getElementById('header-date').innerText = gregStr;
+    if(document.getElementById('date-greg')) document.getElementById('date-greg').innerText = gregStr;
 };
 
 window.switchPage = function(pageId) {
@@ -115,12 +116,13 @@ window.openSurah = async function(nomor, targetAyah = 1) {
                         <button class="btn-ayah-action" onclick="window.playAyah(${i})"><i class="fas fa-play" id="icon-play-${i}"></i></button>
                         <button class="btn-ayah-action btn-bookmark ${isMarked ? 'active' : ''}" onclick="window.bookmarkAyah(${i}, this)"><i class="fas fa-bookmark"></i></button>
                         <button class="btn-ayah-action text-info" onclick="window.openTafsirPerAyat(${window.currentSurah.nomor}, ${a.nomorAyat})"><i class="fas fa-book-open"></i></button>
-                        <button class="btn-ayah-action btn-record" id="btn-record-${i}" onclick="window.toggleRecord(${i})"><i class="fas fa-microphone"></i></button>
+                        
+                        <button class="btn-ayah-action text-warning" title="Waqaf & Ibtida" onclick="window.showWaqafGuide(${i})"><i class="fas fa-traffic-light"></i></button>
+                        
                         <button class="btn-ayah-action text-success" onclick="window.openWallpaperCreator(${i})"><i class="fas fa-paint-brush"></i></button>
                         <button class="btn-ayah-action" onclick="window.shareAyah(${i})"><i class="fas fa-share-alt"></i></button>
                     </div>
                 </div>
-                <audio id="audio-user-${i}" controls class="w-100 mb-2 hidden" style="height: 30px;"></audio>
                 <div class="text-arab font-arab" style="font-size:${window.prefs.arabSize}px;">${window.prefs.showTajwid && window.applyTajwid ? window.applyTajwid(a.teksArab) : a.teksArab}</div>
                 <div class="box-latin ${window.prefs.showLatin?'':'hidden'}"><div class="text-latin" style="font-size:${window.prefs.latinSize}px;">${a.teksLatin}</div></div>
                 <div class="box-trans ${window.prefs.showTrans?'':'hidden'}"><div class="text-trans" style="font-size:${window.prefs.latinSize}px;">${a.teksIndonesia}</div></div>
@@ -141,7 +143,6 @@ window.openSurah = async function(nomor, targetAyah = 1) {
 window.playAyah = function(idx) {
     if(!window.currentSurah) return;
     const icon = document.getElementById(`icon-play-${idx}`);
-    // Pakai Qari dari Pengaturan (Bisa 01, 02, 03, 04, 05)
     const audioUrl = window.currentSurah.ayat[idx].audio[window.prefs.qari] || window.currentSurah.ayat[idx].audio["05"]; 
     
     if (window.activeAyahIndex === idx && !window.audioEngine.paused) {
@@ -234,9 +235,8 @@ window.openWallpaperCreator = function(idx) {
     window.openModal('modal-wallpaper');
 };
 
-// --- FIX BUG TOGGLE (BACA & GLOBAL) & RESET DATA ---
+// --- SETTINGS (Qari Sync, Checkbox Sync) ---
 window.changeQari = function() { 
-    // Ambil value murni dari modal Titik 3
     window.prefs.qari = document.getElementById('read-qari-selector').value; 
     window.savePrefs(); window.loadPrefsUI();
     if(window.currentSurah && window.activeAyahIndex >= 0 && !window.audioEngine.paused) { 
@@ -251,34 +251,24 @@ window.updateFont = function(type, val) {
     window.savePrefs(); window.loadPrefsUI();
 };
 window.toggleFeature = function() {
-    // Membaca LANGSUNG dari checkbox Titik Tiga (Karena yang di Global sudah dihapus)
-    window.prefs.showLatin = document.getElementById('toggle-latin-read').checked;
-    window.prefs.showTrans = document.getElementById('toggle-trans-read').checked;
-    window.prefs.showTajwid = document.getElementById('toggle-tajwid-read').checked;
-    window.prefs.autoplay = document.getElementById('toggle-autoplay-read').checked;
-    
+    const isReadModal = document.getElementById('modal-read-settings')?.style.display === 'flex';
+    if(isReadModal) {
+        window.prefs.showLatin = document.getElementById('toggle-latin-read').checked;
+        window.prefs.showTrans = document.getElementById('toggle-trans-read').checked;
+        window.prefs.showTajwid = document.getElementById('toggle-tajwid-read').checked;
+        window.prefs.autoplay = document.getElementById('toggle-autoplay-read').checked;
+    }
     window.savePrefs();
-    
-    // Terapkan ke Tampilan Quran
     document.querySelectorAll('.box-latin').forEach(e => e.classList.toggle('hidden', !window.prefs.showLatin)); 
     document.querySelectorAll('.box-trans').forEach(e => e.classList.toggle('hidden', !window.prefs.showTrans));
-    
-    if(window.currentSurah) { 
-        window.currentSurah.ayat.forEach((a, i) => { 
-            const el = document.querySelector(`#ayah-${i} .text-arab`); 
-            if(el) el.innerHTML = window.prefs.showTajwid && window.applyTajwid ? window.applyTajwid(a.teksArab) : a.teksArab; 
-        }); 
-    }
+    if(window.currentSurah) { window.currentSurah.ayat.forEach((a, i) => { const el = document.querySelector(`#ayah-${i} .text-arab`); if(el) el.innerHTML = window.prefs.showTajwid && window.applyTajwid ? window.applyTajwid(a.teksArab) : a.teksArab; }); }
 };
 window.savePrefs = function() { localStorage.setItem('rPrefs', JSON.stringify(window.prefs)); };
 window.loadPrefsUI = function() {
     if(document.getElementById('read-qari-selector')) document.getElementById('read-qari-selector').value = window.prefs.qari;
     if(document.getElementById('theme-selector')) document.getElementById('theme-selector').value = window.prefs.theme;
-    
     document.querySelectorAll('.range-arab').forEach(el => el.value = window.prefs.arabSize);
     document.querySelectorAll('.range-latin').forEach(el => el.value = window.prefs.latinSize);
-
-    // Load ke Checkbox (Titik Tiga)
     if(document.getElementById('toggle-latin-read')) document.getElementById('toggle-latin-read').checked = window.prefs.showLatin;
     if(document.getElementById('toggle-trans-read')) document.getElementById('toggle-trans-read').checked = window.prefs.showTrans;
     if(document.getElementById('toggle-tajwid-read')) document.getElementById('toggle-tajwid-read').checked = window.prefs.showTajwid;
@@ -300,7 +290,7 @@ window.clearBookmarks = function() {
     }
 };
 
-// --- JADWAL SHOLAT ---
+// --- JADWAL SHOLAT (ANTI-ERROR FALLBACK) ---
 window.getLocationAndPrayerTimes = function() {
     const container = document.getElementById('prayer-times');
     if(!container) return;
@@ -368,7 +358,6 @@ window.startPrayerCountdown = function(timings) {
 window.openModal = function(id) { const m = document.getElementById(id); if(m) m.style.display = 'flex'; };
 window.closeModal = function(id) { const m = document.getElementById(id); if(m) m.style.display = 'none'; };
 
-// BUG FIX TAFSIR: Tampilkan judul
 window.openTafsirModal = function() { 
     if(!window.currentSurah) return; 
     document.getElementById('tafsir-content').innerHTML = `
