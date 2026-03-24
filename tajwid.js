@@ -1,5 +1,5 @@
 /* ==============================================================
-   TAJWID.JS - 14 HUKUM LENGKAP & AMAN
+   TAJWID.JS - 14 HUKUM LENGKAP & AMAN (REGEX DI-OPTIMALKAN)
    ============================================================== */
 
 const tajwidDatabase = [
@@ -36,7 +36,10 @@ window.applyTajwid = function(text) {
         .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[تثجدذزسشصضطظفقك])`, 'g'), `<span class="t-rule tj-ikhfa" onclick="window.showTajwidInfo(event, 'Ikhfa', '$&')">$&</span>`)
         .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[ءأإهعحغخ])`, 'g'), `<span class="t-rule tj-idzhar" onclick="window.showTajwidInfo(event, 'Izhar', '$&')">$&</span>`)
         .replace(new RegExp(`(ال)(?=${skip}[تثدذرزسشصضطظلن][\u0651])`, 'g'), `<span class="t-rule tj-idgham-syam" onclick="window.showTajwidInfo(event, 'Idgham Syamsiyah', '$&')">$&</span>`)
-        .replace(/([\u06DC])/g, `<span class="t-rule tj-saktah" onclick="window.showTajwidInfo(event, 'Saktah', '$&')">$&</span>`);
+        .replace(/([\u06DC])/g, `<span class="t-rule tj-saktah" onclick="window.showTajwidInfo(event, 'Saktah', '$&')">$&</span>`)
+        .replace(/([ٱ])/g, `<span class="t-rule tj-hamzah" onclick="window.showTajwidInfo(event, 'Hamzah Wasl', '$&')">$&</span>`)
+        .replace(new RegExp(`(ق[\u0652]?)${space}(?=ك)`, 'g'), `<span class="t-rule tj-mutaqaribain" onclick="window.showTajwidInfo(event, 'Idgham Mutaqaribain', '$&')">$&</span>`)
+        .replace(new RegExp(`(د[\u0652]?)${space}(?=ت)`, 'g'), `<span class="t-rule tj-mutajanisain" onclick="window.showTajwidInfo(event, 'Idgham Mutajanisain', '$&')">$&</span>`);
 };
 
 window.showTajwidInfo = function(event, jenis, huruf) {
