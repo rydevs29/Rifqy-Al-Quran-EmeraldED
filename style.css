@@ -3,7 +3,7 @@
     --primary-color: #0d5c46; --primary-hover: #094031;
     --text-dark: #1f2937; --text-muted: #6b7280; --border-color: #e5e7eb;
     
-    /* 14 Tajweed Colors */
+    /* Tajweed Colors */
     --tj-hamzah: #9ca3af; --tj-idgham-syam: #3b82f6; --tj-ghunnah: #f97316; 
     --tj-ikhfa: #ec4899; --tj-mad: #ef4444; --tj-qalqalah: #10b981; 
     --tj-iqlab: #8b5cf6; --tj-idgham: #06b6d4; --tj-ikhfa-syaf: #d946ef; 
@@ -42,30 +42,25 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .mt-1 { margin-top: 5px; } .mt-2 { margin-top: 10px; } .mt-3 { margin-top: 15px; } .mb-1 { margin-bottom: 5px;} .mb-2 { margin-bottom: 10px; } .mb-3 { margin-bottom: 15px; } .mb-4 { margin-bottom: 20px; }
-.mr-2 { margin-right: 10px; } .gap-10 { gap: 10px; } .p-0 { padding: 0 !important; } .overflow-hidden { overflow: hidden !important; }
-.text-primary { color: var(--primary-color); } .text-muted { color: var(--text-muted); } .text-center { text-align: center; } .text-right { text-align: right; } .text-left { text-align: left; } .font-bold { font-weight: 700; }
+.mr-2 { margin-right: 10px; } .gap-10 { gap: 10px; }
+.text-primary { color: var(--primary-color); } .text-muted { color: var(--text-muted); } .text-center { text-align: center; } .text-right { text-align: right; } .font-bold { font-weight: 700; }
 .text-warning { color: var(--text-warning); } .text-success { color: var(--text-success); } .text-danger { color: var(--text-danger); } .text-info { color: var(--text-info); }
 .bg-primary { background: var(--primary-color); } .text-white { color: #fff; } .bg-light { background: var(--bg-light); }
-.m-0 { margin: 0; } .small { font-size: 12px; } .cursor-pointer { cursor: pointer; } .hidden { display: none !important; } .w-100 { width: 100%; } .p-3 { padding: 15px; } .p-4 { padding: 20px; } .p-2 { padding: 10px; }
+.m-0 { margin: 0; } .small { font-size: 12px; } .cursor-pointer { cursor: pointer; } .hidden { display: none !important; } .w-100 { width: 100%; } .p-3 { padding: 15px; } .p-2 { padding: 10px; }
 .border-primary { border: 2px solid var(--primary-color) !important; } .border-radius { border-radius: 12px; } .pb-2 { padding-bottom: 10px; } .border-bottom { border-bottom: 1px solid var(--border-color); }
 
 /* HEADER */
 .top-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); }
 .brand-logo { font-size: 18px; font-weight: bold; color: var(--primary-color); display: flex; gap: 8px; align-items: center;}
-.header-right { flex: 1; }
 
-.event-dots { display: flex; gap: 5px; }
-.event-dots.justify-center { justify-content: center; }
-.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
-/* JADWAL SHOLAT UI DIPERKECIL & DIRAPIHKAN */
+/* JADWAL SHOLAT UI */
 .prayer-times-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .prayer-times-grid > div { display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border-color); padding: 8px 0; border-radius: 8px;}
 .prayer-times-grid small { font-size: 10px; margin-bottom: 2px;}
 .prayer-times-grid strong { font-size: 13px; }
 @media (max-width: 400px) { .prayer-times-grid { grid-template-columns: repeat(3, 1fr); } }
 
-/* HOME COMPONENTS */
+/* COMPONENTS */
 .tool-card { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); }
 .sultan-card { background: linear-gradient(135deg, var(--primary-color), #053b29); color: white; padding: 20px; border-radius: 16px; }
 .icon-circle-light { width: 45px; height: 45px; background: rgba(255,255,255,0.2); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 20px; }
@@ -83,32 +78,28 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .surah-card { background: var(--bg-card); padding: 15px; border-radius: 12px; display: flex; align-items: center; border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s; }
 .surah-card:active { transform: scale(0.98); background: var(--bg-light); }
 .s-num { width: 35px; height: 35px; background: rgba(0,168,107,0.1); color: var(--primary-color); display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; margin-right: 15px; }
-
 .surah-progress-container { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; margin-top: 8px; overflow: hidden; }
 .surah-progress-fill { height: 100%; background: var(--primary-color); width: 0%; transition: 0.3s; }
 
-/* READ VIEW & STICKY HEADER FIXED */
+/* READ VIEW & STICKY HEADER */
 .read-navbar { position: sticky !important; top: 0 !important; z-index: 999 !important; background: var(--bg-card); margin: -20px -20px 20px -20px; padding: 15px 20px; border-bottom: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
 .btn-back { background: transparent; border: none; font-size: 18px; color: var(--text-dark); cursor: pointer; padding: 5px; }
 
 .ayah-item { background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border-color); transition: 0.3s; }
 .ayah-item.playing { border-left: 4px solid var(--primary-color); background: rgba(0, 168, 107, 0.05); }
-
-/* TOOLBAR AYAT DIKEMBALIKAN FULL ICON */
 .ayah-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
 .ayah-badge { background: rgba(0,168,107,0.1); color: var(--primary-color); font-size: 12px; font-weight: 800; padding: 6px 14px; border-radius: 20px; }
 .ayah-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .btn-ayah-action { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; padding: 5px; transition: 0.2s; }
 .btn-ayah-action.active { color: var(--primary-color); }
 
-/* LATIN & TRANSLATION BOX */
 .text-arab { font-family: 'Amiri', serif; text-align: right; line-height: 2.4; margin-bottom: 25px; direction: rtl; transition: 0.3s; }
 .box-latin { background: rgba(0, 168, 107, 0.05); border-left: 3px solid var(--primary-color); padding: 12px 15px; border-radius: 0 8px 8px 0; margin-bottom: 10px; }
 .text-latin { font-style: italic; color: var(--primary-color); line-height: 1.5; }
 .box-trans { border-left: 3px solid var(--border-color); padding: 8px 15px; }
 .text-trans { color: var(--text-muted); line-height: 1.6; }
 
-/* TAHFIDZ MODE (BLUR) */
+/* TAHFIDZ MODE */
 body.tahfidz-mode .text-arab { color: transparent !important; text-shadow: 0 0 15px var(--text-dark); cursor: pointer; }
 body.tahfidz-mode .text-arab:hover, body.tahfidz-mode .text-arab:active { color: var(--text-dark) !important; text-shadow: none; }
 body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !important; }
@@ -123,7 +114,7 @@ body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !impo
 .tafsir-box { max-width: 600px; }
 @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* FORMS & SETTINGS */
+/* FORMS */
 .form-control { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-dark); outline: none; font-family: inherit;}
 .setting-block { margin-bottom: 15px; }
 .setting-block input[type="range"] { width: 100%; accent-color: var(--primary-color); }
@@ -134,7 +125,7 @@ body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !impo
 .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
 input:checked + .slider { background-color: var(--primary-color); } input:checked + .slider:before { transform: translateX(18px); }
 
-/* BOTTOM NAV (4 TAB UTAMA) */
+/* BOTTOM NAV */
 .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--bg-card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 100; }
 .bottom-nav .nav-btn { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; font-size: 11px; gap: 5px; cursor: pointer; font-weight: 600; width: 25%; }
 .nav-btn.active { color: var(--primary-color); }
@@ -154,6 +145,12 @@ input:checked + .slider { background-color: var(--primary-color); } input:checke
 .tg-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: 0.3s; font-size: 13px; color: #cbd5e1; }
 .tg-body.open { max-height: 400px; padding: 0 15px 15px 15px; }
 
+/* ASMAUL HUSNA & TRACKER */
+.asmaul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.asmaul-item { background: var(--bg-light); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; text-align: center; }
+.tracker-item { display: flex; justify-content: space-between; padding: 12px; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; align-items: center; font-weight: bold; }
+.tracker-item input { width: 20px; height: 20px; accent-color: var(--primary-color); cursor: pointer; }
+
 /* KALENDER & DOA */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
 .cal-day { padding: 10px; background: var(--bg-main); border-radius: 8px; font-weight: bold; }
@@ -163,6 +160,7 @@ input:checked + .slider { background-color: var(--primary-color); } input:checke
 .doa-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: 0.3s; }
 .doa-body.open { max-height: 500px; padding: 15px; border-top: 1px solid var(--border-color); }
 
-/* TAJWID RULES IN TEXT */
-.t-rule { cursor: pointer; border-bottom: 1px dashed rgba(0,0,0,0.2); transition: 0.2s; } .t-rule:active { background: rgba(0,0,0,0.1); border-radius: 4px; }
-.tj-hamzah { color: var(--tj-hamzah); } .tj-idgham_syam { color: var(--tj-idgham-syam); } .tj-ghunnah { color: var(--tj-ghunnah); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-mad { color: var(--tj-mad); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-iqlab { color: var(--tj-iqlab); } .tj-idgham { color: var(--tj-idgham); } .tj-ikhfa_syaf { color: var(--tj-ikhfa-syaf); } .tj-idzhar { color: var(--tj-idzhar); } .tj-saktah { color: var(--tj-saktah); } .tj-mutamatsilain { color: var(--tj-mutamatsilain); } .tj-mutaqaribain { color: var(--tj-mutaqaribain); } .tj-mutajanisain { color: var(--tj-mutajanisain); }
+/* TAJWID RULES IN TEXT - PASTIKAN BISA DIKLIK */
+.t-rule { cursor: pointer; border-bottom: 1px dashed rgba(0,0,0,0.3); transition: 0.2s; position: relative; z-index: 10; } 
+.t-rule:active { background: rgba(0,0,0,0.1); border-radius: 4px; }
+.tj-hamzah { color: var(--tj-hamzah); } .tj-idgham-syam { color: var(--tj-idgham-syam); } .tj-ghunnah { color: var(--tj-ghunnah); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-mad { color: var(--tj-mad); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-iqlab { color: var(--tj-iqlab); } .tj-idgham { color: var(--tj-idgham); } .tj-ikhfa-syaf { color: var(--tj-ikhfa-syaf); } .tj-idzhar { color: var(--tj-idzhar); } .tj-saktah { color: var(--tj-saktah); } .tj-mutamatsilain { color: var(--tj-mutamatsilain); } .tj-mutaqaribain { color: var(--tj-mutaqaribain); } .tj-mutajanisain { color: var(--tj-mutajanisain); }
