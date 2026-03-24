@@ -1,30 +1,6 @@
 /* ==============================================================
-   PREMIUM.JS - TAFSIR KEMENAG, WAQAF GUIDE, DAN MEDIA SESSION
+   PREMIUM.JS - WALLPAPER DOWNLOADER, TAFSIR, & MEDIA SESSION
    ============================================================== */
-
-window.showWaqafGuide = function(idx) {
-    if(!window.currentSurah) return;
-    const a = window.currentSurah.ayat[idx];
-    let content = `
-        <div class="text-center mb-3">
-            <span class="ayah-badge" style="font-size:16px;">Ayat ke-${a.nomorAyat}</span>
-        </div>
-        <div class="bg-light p-3 border-radius mb-3">
-            <p class="font-bold text-primary mb-2"><i class="fas fa-circle text-success small"></i> Hijau (Aman Berhenti):</p>
-            <p>Berhentilah pada tanda waqaf <b>(م, ط, ج, قلى)</b>. Makna ayat sudah sempurna.</p>
-        </div>
-        <div class="bg-light p-3 border-radius mb-3">
-            <p class="font-bold text-warning mb-2"><i class="fas fa-circle text-warning small"></i> Kuning (Boleh Lanjut/Berhenti):</p>
-            <p>Tanda <b>(صلى, ز, ص)</b>. Boleh berhenti, tapi melanjutkan bacaan (washal) lebih utama.</p>
-        </div>
-        <div class="bg-light p-3 border-radius">
-            <p class="font-bold text-danger mb-2"><i class="fas fa-circle text-danger small"></i> Merah (Dilarang Berhenti):</p>
-            <p>Tanda <b>(لا)</b>. Jangan berhenti di sini karena akan merusak arti. Jika kehabisan napas, berhentilah, lalu <b>ulang kembali (Ibtida')</b> dari kata sebelumnya.</p>
-        </div>
-    `;
-    document.getElementById('waqaf-content').innerHTML = content;
-    window.openModal('modal-waqaf');
-};
 
 window.openTafsirPerAyat = async function(surahNo, ayahNo) {
     document.getElementById('tafsir-content').innerHTML = `<div class="text-center"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:30px;"></i><p class="mt-2">Mengambil Tafsir...</p></div>`;
@@ -37,7 +13,31 @@ window.openTafsirPerAyat = async function(surahNo, ayahNo) {
     } catch(e) { document.getElementById('tafsir-content').innerHTML = `<p class="text-danger font-bold text-center">Gagal memuat tafsir. Periksa koneksi.</p>`; }
 };
 
-// --- MEDIA SESSION (NOTIFIKASI BACKGROUND PLAYER) ---
+// --- WALLPAPER REAL DOWNLOAD ---
+window.downloadWallpaper = function() {
+    const canvasEl = document.getElementById('wallpaper-canvas');
+    const btn = document.querySelector('#modal-wallpaper .btn-primary');
+    const oldText = btn.innerHTML;
+    
+    // Indikator Loading
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses Gambar...';
+    
+    html2canvas(canvasEl, { scale: 2, useCORS: true, backgroundColor: null }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `RifqyQuran-Wallpaper.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.innerHTML = oldText;
+        window.closeModal('modal-wallpaper');
+        alert("Wallpaper berhasil diunduh ke galeri!");
+    }).catch(err => {
+        alert("Gagal mengunduh gambar.");
+        btn.innerHTML = oldText;
+    });
+};
+
+// --- MEDIA SESSION (BACKGROUND PLAYER) ---
 window.initMediaSession = function() {
     if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', () => { if(window.audioEngine) window.audioEngine.play(); });
