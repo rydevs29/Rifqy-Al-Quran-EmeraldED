@@ -1,5 +1,5 @@
 /* ==============================================================
-   APP.JS - CORE ENGINE (ANTI-CRASH MODE)
+   APP.JS - CORE ENGINE (FIXED TOGGLES, QARI, & DATE)
    ============================================================== */
 
 window.API_QURAN = "https://equran.id/api/v2";
@@ -8,14 +8,11 @@ window.prefs = JSON.parse(localStorage.getItem('rPrefs')) || { qari: "05", arabS
 window.bookmarksArr = JSON.parse(localStorage.getItem('rBookmarksArr')) || [];
 window.autoScrollInterval = null; window.scrollSpeed = 0;
 
-// Sistem Panggil Aman (Anti-Crash)
 window.safeCall = function(fn) {
-    try { if (typeof window[fn] === 'function') window[fn](); } 
-    catch (e) { console.error(`Error in ${fn}:`, e); }
+    try { if (typeof window[fn] === 'function') window[fn](); } catch (e) { console.error(`Error in ${fn}:`, e); }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.prefs.qari = "05"; // Hard Lock Mishary
     window.safeCall('applyThemeInit');
     window.safeCall('fixDateDisplay');
     window.safeCall('fetchSurahs');
@@ -28,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.safeCall('initMediaSession');
 });
 
-// --- THEME ---
 window.applyThemeInit = function() { window.applyTheme(window.prefs.theme); };
 window.applyTheme = function(theme) {
     document.body.className = '';
@@ -37,19 +33,12 @@ window.applyTheme = function(theme) {
 };
 window.changeTheme = function() { window.prefs.theme = document.getElementById('theme-selector').value; window.applyTheme(window.prefs.theme); window.savePrefs(); };
 
-// --- TANGGAL MASEHI & HIJRIAH ---
 window.fixDateDisplay = function() {
     const today = new Date();
     const gregStr = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    if(document.getElementById('header-greg')) document.getElementById('header-greg').innerText = gregStr;
-    if(document.getElementById('date-greg')) document.getElementById('date-greg').innerText = gregStr;
-    try {
-        let hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric', month: 'long', year: 'numeric' }).format(today);
-        if(document.getElementById('header-hijri')) document.getElementById('header-hijri').innerText = `${hijriStr.replace(/SM|AH/g, '').trim()} H`;
-    } catch(e) { if(document.getElementById('header-hijri')) document.getElementById('header-hijri').innerText = `1447 H`; }
+    if(document.getElementById('header-date')) document.getElementById('header-date').innerText = gregStr;
 };
 
-// --- NAVIGASI ---
 window.switchPage = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
@@ -65,7 +54,6 @@ window.switchPage = function(pageId) {
     window.scrollTo(0,0);
 };
 
-// --- FETCH QURAN (DIJAMIN MUNCUL) ---
 window.fetchSurahs = async function() {
     const list = document.getElementById('surah-list');
     if(!list) return;
@@ -74,7 +62,7 @@ window.fetchSurahs = async function() {
         const data = await res.json(); 
         window.allSurahs = data.data; 
         window.renderSurahs(window.allSurahs);
-    } catch (e) { list.innerHTML = `<p class="text-center text-danger font-bold mt-3">Gagal memuat Al-Quran. Periksa koneksi internet.</p>`; }
+    } catch (e) { list.innerHTML = `<p class="text-center text-danger font-bold mt-3">Gagal memuat Al-Quran.</p>`; }
 };
 window.renderSurahs = function(data) {
     const list = document.getElementById('surah-list');
@@ -96,7 +84,6 @@ window.filterSurah = function() {
     else window.renderSurahs(window.allSurahs.filter(s => s.namaLatin.toLowerCase().includes(q) || s.arti.toLowerCase().includes(q)));
 };
 
-// --- DIRECT LINK SHARE ---
 window.checkDirectLink = function() {
     const p = new URLSearchParams(window.location.search);
     const surahP = p.get('surah'); const ayahP = p.get('ayah');
@@ -106,7 +93,6 @@ window.checkDirectLink = function() {
     }
 };
 
-// --- BUKA SURAH & RENDER ---
 window.openSurah = async function(nomor, targetAyah = 1) {
     window.switchPage('page-read');
     document.getElementById('ayah-list').innerHTML = `<div class="text-center mt-5"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:40px;"></i></div>`;
@@ -134,7 +120,6 @@ window.openSurah = async function(nomor, targetAyah = 1) {
                         <button class="btn-ayah-action" onclick="window.shareAyah(${i})"><i class="fas fa-share-alt"></i></button>
                     </div>
                 </div>
-                <audio id="audio-user-${i}" controls class="w-100 mb-2 hidden" style="height: 30px;"></audio>
                 <div class="text-arab font-arab" style="font-size:${window.prefs.arabSize}px;">${window.prefs.showTajwid && window.applyTajwid ? window.applyTajwid(a.teksArab) : a.teksArab}</div>
                 <div class="box-latin ${window.prefs.showLatin?'':'hidden'}"><div class="text-latin" style="font-size:${window.prefs.latinSize}px;">${a.teksLatin}</div></div>
                 <div class="box-trans ${window.prefs.showTrans?'':'hidden'}"><div class="text-trans" style="font-size:${window.prefs.latinSize}px;">${a.teksIndonesia}</div></div>
@@ -152,11 +137,11 @@ window.openSurah = async function(nomor, targetAyah = 1) {
     } catch(e) { alert("Gagal memuat surat."); window.switchPage('page-home'); }
 };
 
-// --- AUDIO PLAY/PAUSE (LOCKED MISHARY) ---
 window.playAyah = function(idx) {
     if(!window.currentSurah) return;
     const icon = document.getElementById(`icon-play-${idx}`);
-    const audioUrl = window.currentSurah.ayat[idx].audio["05"]; // LOCKED MISHARY
+    // Pakai Qari yang dipilih (default "05")
+    const audioUrl = window.currentSurah.ayat[idx].audio[window.prefs.qari] || window.currentSurah.ayat[idx].audio["05"]; 
     
     if (window.activeAyahIndex === idx && !window.audioEngine.paused) {
         window.audioEngine.pause(); icon.className = 'fas fa-play';
@@ -178,14 +163,9 @@ if(window.audioEngine) {
     });
 }
 
-// --- BOOKMARKS ---
 window.bookmarkAyah = function(idx, btnEl) {
     if(!window.currentSurah) return;
-    const aNo = window.currentSurah.ayat[idx].nomorAyat;
-    const sNo = window.currentSurah.nomor;
-    const sName = window.currentSurah.namaLatin;
-    const totalAyah = window.currentSurah.jumlahAyat;
-
+    const aNo = window.currentSurah.ayat[idx].nomorAyat; const sNo = window.currentSurah.nomor; const sName = window.currentSurah.namaLatin; const totalAyah = window.currentSurah.jumlahAyat;
     const existingIdx = window.bookmarksArr.findIndex(b => b.sNo === sNo && b.aNo === aNo);
     
     if(existingIdx >= 0) {
@@ -213,8 +193,7 @@ window.renderBookmarksPage = function() {
     
     const groups = window.bookmarksArr.reduce((acc, curr, i) => {
         if(!acc[curr.folder]) acc[curr.folder] = [];
-        acc[curr.folder].push({ ...curr, originalIndex: i });
-        return acc;
+        acc[curr.folder].push({ ...curr, originalIndex: i }); return acc;
     }, {});
     
     list.innerHTML = Object.keys(groups).map(folder => `
@@ -230,7 +209,6 @@ window.renderBookmarksPage = function() {
 };
 
 window.hapusBookmark = function(idx) { window.bookmarksArr.splice(idx, 1); localStorage.setItem('rBookmarksArr', JSON.stringify(window.bookmarksArr)); window.renderBookmarksPage(); window.checkBookmark(); };
-
 window.checkBookmark = function() {
     const card = document.getElementById('continue-reading-card');
     if(!card) return;
@@ -241,7 +219,6 @@ window.checkBookmark = function() {
 };
 window.continueReading = function() { if(window.bookmarksArr.length > 0) window.openSurah(window.bookmarksArr[0].sNo, window.bookmarksArr[0].aNo); };
 
-// --- SHARE ---
 window.shareAyah = function(idx) {
     if(!window.currentSurah) return;
     const a = window.currentSurah.ayat[idx];
@@ -250,30 +227,54 @@ window.shareAyah = function(idx) {
     if (navigator.share) navigator.share({ title: 'Rifqy Quran', text: textToShare }); else { navigator.clipboard.writeText(textToShare); alert("Teks & Link disalin!"); }
 };
 
-// --- SETTINGS ---
+// --- SETTINGS (Qari Sync, Checkbox Sync, Sliders Sync) ---
+window.changeQari = function(context) { 
+    if(context === 'global') window.prefs.qari = document.getElementById('qari-selector').value; 
+    else window.prefs.qari = document.getElementById('read-qari-selector').value; 
+    window.savePrefs(); 
+    window.loadPrefsUI();
+    if(window.currentSurah && window.activeAyahIndex >= 0 && !window.audioEngine.paused) { 
+        window.audioEngine.src = window.currentSurah.ayat[window.activeAyahIndex].audio[window.prefs.qari] || window.currentSurah.ayat[window.activeAyahIndex].audio["05"]; 
+        window.audioEngine.play(); 
+    }
+};
 window.changeFontFamily = function() { const font = document.getElementById('font-selector').value; document.querySelectorAll('.text-arab, .font-arab').forEach(el => { el.style.fontFamily = font; }); };
 window.updateFont = function(type, val) {
     if(type === 'arab') { window.prefs.arabSize = val; document.querySelectorAll('.text-arab').forEach(e => e.style.fontSize = val+'px'); }
     else { window.prefs.latinSize = val; document.querySelectorAll('.text-latin, .text-trans').forEach(e => e.style.fontSize = val+'px'); }
-    window.savePrefs();
+    window.savePrefs(); window.loadPrefsUI();
 };
 window.toggleFeature = function() {
-    window.prefs.showLatin = document.getElementById('toggle-latin').checked || document.getElementById('toggle-latin-read')?.checked; 
-    window.prefs.showTrans = document.getElementById('toggle-trans').checked || document.getElementById('toggle-trans-read')?.checked; 
-    window.prefs.showTajwid = document.getElementById('toggle-tajwid').checked || document.getElementById('toggle-tajwid-read')?.checked; 
-    window.prefs.autoplay = document.getElementById('toggle-autoplay').checked || document.getElementById('toggle-autoplay-read')?.checked;
-    
+    const isReadModal = document.getElementById('modal-read-settings')?.style.display === 'flex';
+    if(isReadModal) {
+        window.prefs.showLatin = document.getElementById('toggle-latin-read').checked;
+        window.prefs.showTrans = document.getElementById('toggle-trans-read').checked;
+        window.prefs.showTajwid = document.getElementById('toggle-tajwid-read').checked;
+        window.prefs.autoplay = document.getElementById('toggle-autoplay-read').checked;
+    } else {
+        window.prefs.showLatin = document.getElementById('toggle-latin').checked;
+        window.prefs.showTrans = document.getElementById('toggle-trans').checked;
+        window.prefs.showTajwid = document.getElementById('toggle-tajwid').checked;
+        window.prefs.autoplay = document.getElementById('toggle-autoplay').checked;
+    }
+    window.savePrefs(); window.loadPrefsUI();
     document.querySelectorAll('.box-latin').forEach(e => e.classList.toggle('hidden', !window.prefs.showLatin)); 
     document.querySelectorAll('.box-trans').forEach(e => e.classList.toggle('hidden', !window.prefs.showTrans));
-    window.savePrefs(); window.loadPrefsUI();
     if(window.currentSurah) { window.currentSurah.ayat.forEach((a, i) => { const el = document.querySelector(`#ayah-${i} .text-arab`); if(el) el.innerHTML = window.prefs.showTajwid && window.applyTajwid ? window.applyTajwid(a.teksArab) : a.teksArab; }); }
 };
 window.savePrefs = function() { localStorage.setItem('rPrefs', JSON.stringify(window.prefs)); };
 window.loadPrefsUI = function() {
+    if(document.getElementById('qari-selector')) document.getElementById('qari-selector').value = window.prefs.qari;
+    if(document.getElementById('read-qari-selector')) document.getElementById('read-qari-selector').value = window.prefs.qari;
     if(document.getElementById('theme-selector')) document.getElementById('theme-selector').value = window.prefs.theme;
+    
+    document.querySelectorAll('.range-arab').forEach(el => el.value = window.prefs.arabSize);
+    document.querySelectorAll('.range-latin').forEach(el => el.value = window.prefs.latinSize);
+
     ['toggle-latin', 'toggle-trans', 'toggle-tajwid', 'toggle-autoplay'].forEach(id => {
-        if(document.getElementById(id)) document.getElementById(id).checked = window.prefs[id.replace('toggle-', 'show') === 'showautoplay' ? 'autoplay' : id.replace('toggle-', 'show')];
-        if(document.getElementById(id+'-read')) document.getElementById(id+'-read').checked = window.prefs[id.replace('toggle-', 'show') === 'showautoplay' ? 'autoplay' : id.replace('toggle-', 'show')];
+        const isChecked = window.prefs[id.replace('toggle-', 'show') === 'showautoplay' ? 'autoplay' : id.replace('toggle-', 'show')];
+        if(document.getElementById(id)) document.getElementById(id).checked = isChecked;
+        if(document.getElementById(id+'-read')) document.getElementById(id+'-read').checked = isChecked;
     });
 };
 
@@ -344,9 +345,7 @@ window.startPrayerCountdown = function(timings) {
 // --- MODALS & TOOLS ---
 window.openModal = function(id) { const m = document.getElementById(id); if(m) m.style.display = 'flex'; };
 window.closeModal = function(id) { const m = document.getElementById(id); if(m) m.style.display = 'none'; };
-window.openTafsirModal = function() { if(!window.currentSurah) return; document.getElementById('tafsir-content').innerHTML = window.currentSurah.deskripsi; window.openModal('modal-tafsir'); };
 
-// --- KALENDER EKSPLOR (ANTI-CRASH) ---
 window.renderCalGrid = function() {
     const calGrid = document.getElementById('cal-grid');
     if(!calGrid) return;
