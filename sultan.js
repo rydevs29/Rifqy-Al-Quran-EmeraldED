@@ -40,7 +40,6 @@ window.openTasbih = function() {
 
 window.startQuiz = function(t) { let ans = prompt("Hukum nun mati bertemu Ba (ب) disebut?\nA. Ikhfa\nB. Iqlab\nC. Idzhar"); if(ans && ans.toLowerCase() === 'b') alert("✅ Benar!"); else alert("❌ Salah."); };
 
-// --- ASMAUL HUSNA & TRACKER ---
 window.renderAsmaulHusna = function() {
     const asmaulHusna99 = [
         {a:"الرَّحْمَنُ", l:"Ar-Rahman", i:"Maha Pengasih"},{a:"الرَّحِيمُ", l:"Ar-Rahim", i:"Maha Penyayang"},{a:"الْمَلِكُ", l:"Al-Malik", i:"Maha Merajai"},{a:"الْقُدُّوسُ", l:"Al-Quddus", i:"Maha Suci"},{a:"السَّلَامُ", l:"As-Salam", i:"Maha Menyelamatkan"},
