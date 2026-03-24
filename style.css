@@ -13,7 +13,6 @@
     --text-warning: #f59e0b; --text-success: #10b981; --text-info: #3b82f6; --text-danger: #ef4444;
 }
 
-/* THEME HANDLING */
 body.dark-mode {
     --bg-main: #000000; --bg-card: #121212; --bg-light: #1a1a1a;
     --primary-color: #00A86B; --primary-hover: #00d285;
@@ -50,21 +49,24 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .m-0 { margin: 0; } .small { font-size: 12px; } .cursor-pointer { cursor: pointer; } .hidden { display: none !important; } .w-100 { width: 100%; } .p-3 { padding: 15px; } .p-4 { padding: 20px; } .p-2 { padding: 10px; }
 .border-primary { border: 2px solid var(--primary-color) !important; } .border-radius { border-radius: 12px; } .pb-2 { padding-bottom: 10px; } .border-bottom { border-bottom: 1px solid var(--border-color); }
 
-/* HEADER & TANGGAL HIJRIAH */
+/* HEADER */
 .top-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); }
 .brand-logo { font-size: 18px; font-weight: bold; color: var(--primary-color); display: flex; gap: 8px; align-items: center;}
+.header-right { flex: 1; }
 
 .event-dots { display: flex; gap: 5px; }
 .event-dots.justify-center { justify-content: center; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.bg-success { background-color: var(--text-success); } .bg-warning { background-color: var(--text-warning); } .bg-info { background-color: var(--text-info); }
 
-/* JADWAL SHOLAT UI & RESPONSIVE */
-.prayer-times-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 8px; }
-.prayer-times-grid > div { display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border-color); padding: 10px 0; border-radius: 8px;}
+/* JADWAL SHOLAT UI DIPERKECIL & DIRAPIHKAN */
+.prayer-times-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.prayer-times-grid > div { display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border-color); padding: 8px 0; border-radius: 8px;}
+.prayer-times-grid small { font-size: 10px; margin-bottom: 2px;}
+.prayer-times-grid strong { font-size: 13px; }
+@media (max-width: 400px) { .prayer-times-grid { grid-template-columns: repeat(3, 1fr); } }
 
 /* HOME COMPONENTS */
-.tool-card { background: var(--bg-card); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); }
+.tool-card { background: var(--bg-card); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); }
 .sultan-card { background: linear-gradient(135deg, var(--primary-color), #053b29); color: white; padding: 20px; border-radius: 16px; }
 .icon-circle-light { width: 45px; height: 45px; background: rgba(255,255,255,0.2); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 20px; }
 .btn-primary { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s;}
@@ -82,7 +84,6 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .surah-card:active { transform: scale(0.98); background: var(--bg-light); }
 .s-num { width: 35px; height: 35px; background: rgba(0,168,107,0.1); color: var(--primary-color); display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold; margin-right: 15px; }
 
-/* PROGRESS BAR SURAT */
 .surah-progress-container { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; margin-top: 8px; overflow: hidden; }
 .surah-progress-fill { height: 100%; background: var(--primary-color); width: 0%; transition: 0.3s; }
 
@@ -93,11 +94,11 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .ayah-item { background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--border-color); transition: 0.3s; }
 .ayah-item.playing { border-left: 4px solid var(--primary-color); background: rgba(0, 168, 107, 0.05); }
 
-/* TOOLBAR AYAT */
+/* TOOLBAR AYAT DIKEMBALIKAN FULL ICON */
 .ayah-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
 .ayah-badge { background: rgba(0,168,107,0.1); color: var(--primary-color); font-size: 12px; font-weight: 800; padding: 6px 14px; border-radius: 20px; }
-.ayah-actions { display: flex; gap: 15px; }
-.btn-ayah-action { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; transition: 0.2s; }
+.ayah-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.btn-ayah-action { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; padding: 5px; transition: 0.2s; }
 .btn-ayah-action.active { color: var(--primary-color); }
 
 /* LATIN & TRANSLATION BOX */
@@ -107,21 +108,24 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .box-trans { border-left: 3px solid var(--border-color); padding: 8px 15px; }
 .text-trans { color: var(--text-muted); line-height: 1.6; }
 
-/* TAHFIDZ MODE (BLUR) FIXED */
+/* TAHFIDZ MODE (BLUR) */
 body.tahfidz-mode .text-arab { color: transparent !important; text-shadow: 0 0 15px var(--text-dark); cursor: pointer; }
 body.tahfidz-mode .text-arab:hover, body.tahfidz-mode .text-arab:active { color: var(--text-dark) !important; text-shadow: none; }
 body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !important; }
 
-/* MODALS FIXED */
+/* REKAMAN PULSE */
+.btn-record.recording { color: var(--text-danger) !important; animation: pulse 1s infinite; }
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+/* MODALS */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-box { background: var(--bg-card); width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; animation: scaleUp 0.3s; max-height: 90vh; overflow-y: auto; }
 .tafsir-box { max-width: 600px; }
 @keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* FORMS & SETTINGS */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.setting-block { margin-bottom: 15px; }
 .form-control { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-dark); outline: none; font-family: inherit;}
+.setting-block { margin-bottom: 15px; }
 .setting-block input[type="range"] { width: 100%; accent-color: var(--primary-color); }
 .toggle-row { display: flex; justify-content: space-between; align-items: center; font-weight: 600; margin-bottom: 15px; font-size: 14px; }
 .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
@@ -130,12 +134,12 @@ body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !impo
 .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
 input:checked + .slider { background-color: var(--primary-color); } input:checked + .slider:before { transform: translateX(18px); }
 
-/* 4 BOTTOM NAV BUTTONS */
+/* BOTTOM NAV (4 TAB UTAMA) */
 .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--bg-card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 100; }
 .bottom-nav .nav-btn { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; font-size: 11px; gap: 5px; cursor: pointer; font-weight: 600; width: 25%; }
 .nav-btn.active { color: var(--primary-color); }
 
-/* TAJWID DARK MODAL (UI BARU SESUAI GAMBAR) */
+/* TAJWID DARK MODAL (Sesuai Gambar) */
 .tajwid-dark-modal { background-color: #1e293b !important; border: 1px solid #334155; }
 .tajwid-dark-header { background-color: #0f172a; border-bottom: 1px solid #334155; }
 .tajwid-dark-footer { background-color: #0f172a; border-top: 1px solid #334155; }
@@ -143,19 +147,17 @@ input:checked + .slider { background-color: var(--primary-color); } input:checke
 .t-section-title { font-size: 11px; text-transform: uppercase; font-weight: bold; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
 .t-desc-text { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; }
 
-/* TAJWID GUIDE UI */
-.tg-item { background: var(--bg-light); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-.tg-header { padding: 15px; display: flex; align-items: center; cursor: pointer; font-weight: 600; }
-.tg-color-box { width: 30px; height: 30px; border-radius: 8px; margin-right: 15px; flex-shrink: 0; }
-.tg-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: 0.3s; font-size: 13px; color: var(--text-muted); }
-.tg-body.open { max-height: 200px; padding: 0 15px 15px 15px; }
+/* TAJWID GUIDE UI LIST */
+.tg-item { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-bottom: 10px; overflow: hidden; color: white; }
+.tg-header { padding: 15px; display: flex; align-items: center; cursor: pointer; font-weight: 600; color: white; }
+.tg-color-box { width: 30px; height: 30px; border-radius: 8px; margin-right: 15px; flex-shrink: 0; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:16px; color:white; }
+.tg-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: 0.3s; font-size: 13px; color: #cbd5e1; }
+.tg-body.open { max-height: 400px; padding: 0 15px 15px 15px; }
 
-/* KALENDER & TABS */
+/* KALENDER & DOA */
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center; }
 .cal-day { padding: 10px; background: var(--bg-main); border-radius: 8px; font-weight: bold; }
 .cal-day.today { background: var(--primary-color); color: white; }
-
-/* DOA ACCORDION */
 .doa-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
 .doa-header { padding: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 .doa-body { padding: 0 15px; max-height: 0; overflow: hidden; transition: 0.3s; }
@@ -163,4 +165,4 @@ input:checked + .slider { background-color: var(--primary-color); } input:checke
 
 /* TAJWID RULES IN TEXT */
 .t-rule { cursor: pointer; border-bottom: 1px dashed rgba(0,0,0,0.2); transition: 0.2s; } .t-rule:active { background: rgba(0,0,0,0.1); border-radius: 4px; }
-.tj-hamzah { color: var(--tj-hamzah); } .tj-idgham_syam { color: var(--tj-idgham-syam); } .tj-ghunnah { color: var(--tj-ghunnah); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-mad { color: var(--tj-mad); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-iqlab { color: var(--tj-iqlab); } .tj-idgham_bighun { color: var(--tj-idgham); } .tj-ikhfa_syaf { color: var(--tj-ikhfa-syaf); } .tj-idzhar { color: var(--tj-idzhar); } .tj-saktah { color: var(--tj-saktah); } .tj-mutamatsilain { color: var(--tj-mutamatsilain); } .tj-mutaqaribain { color: var(--tj-mutaqaribain); } .tj-mutajanisain { color: var(--tj-mutajanisain); }
+.tj-hamzah { color: var(--tj-hamzah); } .tj-idgham_syam { color: var(--tj-idgham-syam); } .tj-ghunnah { color: var(--tj-ghunnah); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-mad { color: var(--tj-mad); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-iqlab { color: var(--tj-iqlab); } .tj-idgham { color: var(--tj-idgham); } .tj-ikhfa_syaf { color: var(--tj-ikhfa-syaf); } .tj-idzhar { color: var(--tj-idzhar); } .tj-saktah { color: var(--tj-saktah); } .tj-mutamatsilain { color: var(--tj-mutamatsilain); } .tj-mutaqaribain { color: var(--tj-mutaqaribain); } .tj-mutajanisain { color: var(--tj-mutajanisain); }
