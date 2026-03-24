@@ -51,7 +51,6 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 
 .top-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--bg-card); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); }
 .brand-logo { font-size: 18px; font-weight: bold; color: var(--primary-color); display: flex; gap: 8px; align-items: center;}
-.event-dots { display: flex; gap: 4px; } .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
 .prayer-times-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
 .prayer-times-grid > div { display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border-color); padding: 5px 0; border-radius: 8px;}
@@ -99,9 +98,6 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 body.tahfidz-mode .text-arab { color: transparent !important; text-shadow: 0 0 15px var(--text-dark); cursor: pointer; }
 body.tahfidz-mode .text-arab:hover, body.tahfidz-mode .text-arab:active { color: var(--text-dark) !important; text-shadow: none; }
 body.tahfidz-mode .box-latin, body.tahfidz-mode .box-trans { display: none !important; }
-
-.btn-record.recording { color: var(--text-danger) !important; animation: pulse 1s infinite; }
-@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; }
 .modal-box { background: var(--bg-card); width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; animation: scaleUp 0.3s; max-height: 90vh; overflow-y: auto; }
