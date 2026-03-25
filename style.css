@@ -33,9 +33,19 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 
 .app-layout { display: flex; min-height: 100vh; }
 .main-content { flex: 1; padding-bottom: 80px; width: 100%; }
-.sidebar { width: 250px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 20px; position: sticky; top: 0; height: 100vh; display: none; }
-@media (min-width: 768px) { .sidebar { display: flex; flex-direction: column; } .mobile-only { display: none !important; } .main-content { padding: 40px; } .surah-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } }
-.page { display: none; animation: fadeIn 0.3s; max-width: 800px; margin: 0 auto; padding: 20px; }
+.sidebar { width: 250px; min-width: 250px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 20px; position: sticky; top: 0; height: 100vh; display: none; }
+@media (min-width: 768px) { 
+    .sidebar { display: flex; flex-direction: column; } 
+    .mobile-only { display: none !important; } 
+    .main-content { padding: 40px; } 
+    .surah-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); } 
+    /* SIDEBAR LANDSCAPE FIX */
+    aside.sidebar .side-nav { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    aside.sidebar .nav-btn { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; padding: 12px 15px; width: 100%; border-radius: 12px; background: transparent; border: none; color: var(--text-muted); font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    aside.sidebar .nav-btn i { font-size: 20px; width: 30px; text-align: center; margin-right: 10px; }
+    aside.sidebar .nav-btn.active { background: rgba(0,168,107,0.1); color: var(--primary-color); }
+}
+.page { display: none; animation: fadeIn 0.3s; max-width: 800px; margin: 0 auto; padding: 15px; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -78,7 +88,7 @@ body { background: var(--bg-main); color: var(--text-dark); transition: backgrou
 .surah-progress-container { width: 100%; height: 3px; background: var(--border-color); border-radius: 2px; margin-top: 6px; overflow: hidden; }
 .surah-progress-fill { height: 100%; background: var(--primary-color); width: 0%; transition: 0.3s; }
 
-.read-navbar { position: sticky !important; top: 0 !important; z-index: 999 !important; background: var(--bg-card); margin: -20px -20px 15px -20px; padding: 10px 15px; border-bottom: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+.read-navbar { position: sticky !important; top: 0 !important; z-index: 999 !important; background: var(--bg-card); margin: -15px -15px 15px -15px; padding: 10px 15px; border-bottom: 2px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
 .btn-back { background: transparent; border: none; font-size: 16px; color: var(--text-dark); cursor: pointer; padding: 5px; }
 
 .ayah-item { background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); transition: 0.3s; }
@@ -153,3 +163,12 @@ input:checked + .slider { background-color: var(--primary-color); } input:checke
 .t-tajwid-click { cursor: pointer; border-bottom: 1px dashed rgba(0,0,0,0.2); }
 
 .tj-hamzah { color: var(--tj-hamzah); } .tj-idgham-syam { color: var(--tj-idgham-syam); } .tj-ghunnah { color: var(--tj-ghunnah); } .tj-ikhfa { color: var(--tj-ikhfa); } .tj-mad { color: var(--tj-mad); } .tj-qalqalah { color: var(--tj-qalqalah); } .tj-iqlab { color: var(--tj-iqlab); } .tj-idgham { color: var(--tj-idgham); } .tj-ikhfa-syaf { color: var(--tj-ikhfa-syaf); } .tj-idzhar { color: var(--tj-idzhar); } .tj-saktah { color: var(--tj-saktah); } .tj-mutamatsilain { color: var(--tj-mutamatsilain); } .tj-mutaqaribain { color: var(--tj-mutaqaribain); } .tj-mutajanisain { color: var(--tj-mutajanisain); }
+
+/* QIBLA UI MEWAH */
+.qibla-compass-container { position: relative; width: 220px; height: 220px; margin: 0 auto; border-radius: 50%; border: 4px solid #1e293b; background: radial-gradient(circle, #0f172a, #1e293b); box-shadow: 0 0 20px rgba(0, 168, 107, 0.15); }
+.qibla-kaaba-icon { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; background: var(--primary-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: white; font-size: 20px; z-index: 5; box-shadow: 0 0 15px var(--primary-color); }
+.qibla-needle-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.qibla-needle { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 4px; height: 80px; background: linear-gradient(to top, transparent, var(--primary-color)); border-radius: 2px; }
+.qibla-center-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; background: var(--primary-color); border-radius: 50%; box-shadow: 0 0 10px var(--primary-color); z-index: 6;}
+.qibla-stats { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
+.qibla-stat-card { flex: 1; background: #1e293b; padding: 12px; border-radius: 10px; color: white; border: 1px solid #334155;}
