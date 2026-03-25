@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rifqy Al-Quran - Ultimate Stable</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Lateef&family=Reem+Kufi&family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Aref+Ruqaa&family=Kufam:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -33,19 +33,19 @@
 
             <section id="page-home" class="page active">
                 
-                <div class="tool-card bg-primary text-white mb-3" style="padding: 15px; border: none; background: linear-gradient(135deg, var(--primary-color), #053b29);">
-                    <div class="flex-between mb-2 opacity-75">
+                <div class="tool-card bg-primary text-white mb-3" style="padding: 12px; border: none; background: linear-gradient(135deg, var(--primary-color), #053b29);">
+                    <div class="flex-between mb-1 opacity-75">
                         <small class="font-bold"><i class="fas fa-lightbulb text-warning"></i> Inspirasi Hari Ini</small>
                         <i class="fas fa-sync-alt cursor-pointer" onclick="window.renderAyatHariIni()" title="Ganti Ayat"></i>
                     </div>
-                    <h3 id="aotd-arab" class="font-arab text-right mb-2 mt-2" style="font-size: 22px; line-height: 1.8;">Memuat...</h3>
-                    <p id="aotd-indo" class="small mb-2" style="font-style: italic; line-height: 1.4;">Memuat arti...</p>
-                    <div class="text-right"><small id="aotd-surah" class="font-bold text-warning"></small></div>
+                    <h3 id="aotd-arab" class="font-arab text-right mb-2 mt-1" style="font-size: 20px; line-height: 1.6;">Memuat...</h3>
+                    <p id="aotd-indo" class="small mb-1" style="font-style: italic; line-height: 1.4; font-size: 11px;">Memuat arti...</p>
+                    <div class="text-right"><small id="aotd-surah" class="font-bold text-warning" style="font-size: 10px;"></small></div>
                 </div>
 
-                <div class="tool-card mb-3 border-primary" style="padding: 10px;">
+                <div class="tool-card mb-2 border-primary" style="padding: 10px;">
                     <div class="flex-between mb-2">
-                        <h3 class="text-primary font-bold" style="font-size: 13px;"><i class="fas fa-clock"></i> Jadwal Sholat</h3>
+                        <h3 class="text-primary font-bold" style="font-size: 12px;"><i class="fas fa-clock"></i> Jadwal Sholat</h3>
                         <small id="location-text" class="text-muted bg-light p-1 border-radius" style="font-size: 9px;"><i class="fas fa-map-marker-alt"></i> Mencari Lokasi...</small>
                     </div>
                     <div class="prayer-times-grid" id="prayer-times">
@@ -67,11 +67,11 @@
                 <div id="continue-reading-card" class="tool-card bg-primary text-white hidden mb-3 cursor-pointer" onclick="window.continueReading()" style="padding: 12px;">
                     <div class="flex-between">
                         <div>
-                            <small class="opacity-75">Terakhir Baca</small>
-                            <h3 class="mt-1 mb-1" id="cr-surah">Al-Fatihah</h3>
-                            <p class="small" id="cr-ayah">Ayat No: 1</p>
+                            <small class="opacity-75" style="font-size: 10px;">Terakhir Baca</small>
+                            <h3 class="mt-1 mb-0" id="cr-surah" style="font-size: 16px;">Al-Fatihah</h3>
+                            <p class="small" id="cr-ayah" style="font-size: 11px;">Ayat No: 1</p>
                         </div>
-                        <div class="icon-circle-light"><i class="fas fa-book-reader"></i></div>
+                        <div class="icon-circle-light" style="width: 35px; height: 35px; font-size: 14px;"><i class="fas fa-book-reader"></i></div>
                     </div>
                 </div>
 
@@ -130,6 +130,7 @@
                     <div class="setting-block">
                         <label class="font-bold text-muted small">Metode Perhitungan</label>
                         <select id="prayer-method-selector" class="form-control" onchange="window.changePrayerMethod()">
+                            <option value="auto">Otomatis (Internasional/Akurat)</option>
                             <option value="20">Kemenag RI (Indonesia)</option>
                             <option value="4">Umm Al-Qura (Makkah)</option>
                             <option value="3">MWL (Muslim World League)</option>
@@ -156,6 +157,13 @@
                         <select id="font-selector" class="form-control" onchange="window.changeFontFamily()">
                             <option value="'Amiri', serif">Amiri (Standar)</option>
                             <option value="'Scheherazade New', serif">Scheherazade New (Tebal)</option>
+                            <option value="'Noto Naskh Arabic', serif">Noto Naskh (Jelas)</option>
+                            <option value="'Lateef', serif">Lateef (Kaligrafi)</option>
+                            <option value="'Reem Kufi', sans-serif">Reem Kufi (Estetik)</option>
+                            <option value="'Kufam', sans-serif">Kufam (Modern)</option>
+                            <option value="'Cairo', sans-serif">Cairo (Bersih)</option>
+                            <option value="'Tajawal', sans-serif">Tajawal (Elegan)</option>
+                            <option value="'Aref Ruqaa', serif">Aref Ruqaa (Klasik)</option>
                         </select>
                     </div>
                     <div class="setting-block"><label class="font-bold text-muted small">Ukuran Font Arab</label><input type="range" class="range-arab" min="20" max="60" value="32" oninput="window.updateFont('arab', this.value)"></div>
@@ -184,8 +192,8 @@
                 <div class="read-navbar">
                     <button class="btn-back" onclick="window.switchPage('page-home')"><i class="fas fa-arrow-left"></i></button>
                     
-                    <div class="text-center">
-                        <h2 id="read-surah-name" class="text-primary m-0 font-bold" style="font-size: 18px;">Nama Surat</h2>
+                    <div class="text-center" style="flex:1;">
+                        <h2 id="read-surah-name" class="text-primary m-0 font-bold" style="font-size: 16px;">Nama Surat</h2>
                     </div>
 
                     <div class="flex-end gap-10">
@@ -210,7 +218,10 @@
 
     <div id="modal-jump" class="modal-overlay" style="z-index: 1005;">
         <div class="modal-box text-center">
-            <h3 class="font-bold text-primary mb-3"><i class="fas fa-search"></i> Mau ke ayat mana?</h3>
+            <div class="flex-between mb-3 border-bottom pb-2">
+                <h3 class="font-bold text-primary"><i class="fas fa-hashtag"></i> Lompat ke Ayat</h3>
+                <i class="fas fa-times cursor-pointer text-muted" onclick="window.closeModal('modal-jump')"></i>
+            </div>
             <input type="number" id="input-jump-ayah" class="form-control mb-3" placeholder="Masukkan nomor ayat...">
             <button class="btn-primary w-100" onclick="window.executeJumpAyah()">Go <i class="fas fa-arrow-right"></i></button>
         </div>
@@ -333,7 +344,40 @@
 
     <div id="modal-asmaul" class="modal-overlay"><div class="modal-box tafsir-box"><div class="flex-between mb-3 border-bottom pb-2"><h3 class="font-bold text-primary"><i class="fas fa-list"></i> 99 Asmaul Husna</h3><i class="fas fa-times cursor-pointer text-muted" onclick="window.closeModal('modal-asmaul')"></i></div><div id="asmaul-list" style="max-height: 60vh; overflow-y: auto;"></div></div></div>
     <div id="modal-tracker" class="modal-overlay"><div class="modal-box"><div class="flex-between mb-3 border-bottom pb-2"><h3 class="font-bold text-primary"><i class="fas fa-tasks"></i> Tracker Ibadah</h3><i class="fas fa-times cursor-pointer text-muted" onclick="window.closeModal('modal-tracker')"></i></div><p class="small text-muted mb-3 text-center">Tandai ibadah yang sudah kamu lakukan hari ini.</p><div id="tracker-list" class="mb-3"></div><div class="surah-progress-container bg-light"><div class="surah-progress-fill bg-success" id="tracker-progress" style="width: 0%;"></div></div><p class="text-center small mt-2 font-bold" id="tracker-status">Progres: 0%</p></div></div>
-    <div id="modal-compass" class="modal-overlay"><div class="modal-box text-center"><h3 class="font-bold text-primary mb-3"><i class="fas fa-kaaba"></i> Kompas Kiblat</h3><div id="compass-ring" style="width: 120px; height: 120px; border: 4px solid var(--primary-color); border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; transition: 0.1s;"><i class="fas fa-location-arrow text-primary" style="font-size: 40px;"></i></div><button class="btn-primary w-100 mt-3" onclick="window.startCompassReal()">Aktifkan Kompas</button><button class="btn-outline-primary w-100 mt-2" onclick="window.closeModal('modal-compass')">Tutup</button></div></div>
+    
+    <div id="modal-compass" class="modal-overlay">
+        <div class="modal-box text-center" style="background: #0f172a; color: white;">
+            <div class="flex-between mb-3 border-bottom pb-2" style="border-color: #334155;">
+                <h3 class="font-bold text-primary"><i class="fas fa-kaaba"></i> Qibla Compass</h3>
+                <i class="fas fa-times cursor-pointer text-muted" onclick="window.closeModal('modal-compass')"></i>
+            </div>
+            
+            <div class="qibla-compass-container mt-4 mb-4">
+                <div class="qibla-kaaba-icon"><i class="fas fa-kaaba"></i></div>
+                <div class="qibla-needle-box" id="compass-ring">
+                    <div class="qibla-needle"></div>
+                </div>
+                <div class="qibla-center-dot"></div>
+            </div>
+
+            <div id="qibla-status" class="mb-3 font-bold" style="font-size: 18px; color: #10b981;">Putar HP Anda...</div>
+
+            <div class="qibla-stats mb-3">
+                <div class="qibla-stat-card">
+                    <i class="fas fa-location-arrow text-primary mb-1"></i>
+                    <h3 id="qibla-degree">0°</h3>
+                    <small class="text-muted" style="font-size: 9px;">DARI UTARA</small>
+                </div>
+                <div class="qibla-stat-card">
+                    <i class="fas fa-route text-primary mb-1"></i>
+                    <h3 id="qibla-distance">0 km</h3>
+                    <small class="text-muted" style="font-size: 9px;">JARAK KE KA'BAH</small>
+                </div>
+            </div>
+            <button class="btn-primary w-100" onclick="window.startCompassReal()">Mulai Kalibrasi</button>
+        </div>
+    </div>
+
     <div id="modal-zakat" class="modal-overlay"><div class="modal-box text-center"><h3 class="font-bold text-primary mb-3"><i class="fas fa-calculator"></i> Kalkulator Zakat</h3><input type="number" id="zakat-maal" placeholder="Total Tabungan" class="form-control mb-3" oninput="window.hitungZakat()"><p>Maal (2.5%): <strong id="hasil-maal" class="text-primary">Rp 0</strong></p><button class="btn-outline-primary w-100 mt-3" onclick="window.closeModal('modal-zakat')">Tutup</button></div></div>
     <div id="modal-planner" class="modal-overlay"><div class="modal-box text-center"><h3 class="font-bold text-primary mb-3"><i class="fas fa-bullseye"></i> Planner Khatam</h3><input type="number" id="target-hari" placeholder="Target hari (Misal: 30)" class="form-control mb-3"><button class="btn-primary w-100 mb-2" onclick="window.hitungKhatam()">Hitung</button><div id="hasil-khatam" class="font-bold text-primary hidden"></div><button class="btn-outline-primary w-100 mt-2" onclick="window.closeModal('modal-planner')">Tutup</button></div></div>
     
@@ -355,7 +399,7 @@
         </div>
     </div>
 
-    <div id="modal-wallpaper" class="modal-overlay">
+    <div id="modal-wallpaper" class="modal-overlay" style="z-index: 1005;">
         <div class="modal-box">
             <h3 class="text-primary font-bold mb-3"><i class="fas fa-paint-brush"></i> Wallpaper Creator</h3>
             <div id="wallpaper-canvas" class="p-3 border-radius text-center mb-3" style="background: linear-gradient(135deg, #0d5c46, #053b29); color: white; min-height: 200px; display: flex; flex-direction: column; justify-content: center;">
