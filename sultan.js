@@ -48,18 +48,11 @@ window.switchDoaTab = function(tabName) {
 };
 
 window.renderDoaList = function(data) {
-    const cont = document.getElementById('doa-container');
-    if(!cont) return;
+    const cont = document.getElementById('doa-container'); if(!cont) return;
     cont.innerHTML = data.map((d, i) => `
         <div class="doa-item">
             <div class="doa-header" onclick="window.toggleDoa(${i})"><span>${d.t}</span><i class="fas fa-chevron-down" id="di-icon-${i}"></i></div>
-            <div class="doa-body" id="di-body-${i}">
-                <div class="p-3">
-                    <p class="font-arab text-right mb-2 text-primary" style="font-size:24px;">${d.a}</p>
-                    <p class="small text-primary mb-2" style="font-style:italic;">${d.l}</p>
-                    <p class="small text-muted">${d.i}</p>
-                </div>
-            </div>
+            <div class="doa-body" id="di-body-${i}"><div class="p-3"><p class="font-arab text-right mb-2 text-primary" style="font-size:24px;">${d.a}</p><p class="small text-primary mb-2" style="font-style:italic;">${d.l}</p><p class="small text-muted">${d.i}</p></div></div>
         </div>
     `).join('');
 };
@@ -110,7 +103,6 @@ window.loadTahlil = function(type) {
     document.getElementById('tahlil-content').innerHTML = html;
 };
 
-// Init On Load
 document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { window.renderDoaList(doaDatabase); }, 500); });
 
 window.renderAsmaulHusna = function() {
