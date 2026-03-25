@@ -1,5 +1,5 @@
 /* ==============================================================
-   SULTAN.JS - KUMPULAN FITUR PREMIUM
+   SULTAN.JS - KUMPULAN FITUR PREMIUM (DOA, WIRID, TAHLIL)
    ============================================================== */
 
 window.startVoiceSearch = function() {
@@ -8,37 +8,110 @@ window.startVoiceSearch = function() {
     else alert("Tidak didukung.");
 };
 
-window.hitungZakat = function() {
-    const m = parseFloat(document.getElementById('zakat-maal').value) || 0; document.getElementById('hasil-maal').innerText = `Rp ${(m * 0.025).toLocaleString('id-ID')}`;
-};
-
-window.hitungKhatam = function() {
-    const hari = document.getElementById('target-hari').value; const div = document.getElementById('hasil-khatam');
-    if (!hari || hari <= 0) { alert("Masukkan hari valid!"); return; }
-    div.innerHTML = `Target: Baca <b>${Math.ceil(Math.ceil((604 / hari) / 2) / 5)} Lembar</b> tiap sholat.`; div.classList.remove('hidden');
-};
-
+window.hitungZakat = function() { const m = parseFloat(document.getElementById('zakat-maal').value) || 0; document.getElementById('hasil-maal').innerText = `Rp ${(m * 0.025).toLocaleString('id-ID')}`; };
+window.hitungKhatam = function() { const hari = document.getElementById('target-hari').value; const div = document.getElementById('hasil-khatam'); if (!hari || hari <= 0) { alert("Masukkan hari valid!"); return; } div.innerHTML = `Target: Baca <b>${Math.ceil(Math.ceil((604 / hari) / 2) / 5)} Lembar</b> tiap sholat.`; div.classList.remove('hidden'); };
 window.compassActive = false;
 window.startCompassReal = function() {
     if (window.compassActive) return;
     if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', (e) => {
-            let c = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-            if (c) { document.getElementById('compass-ring').style.transform = `rotate(${295 - c}deg)`; if (c > 285 && c < 305 && navigator.vibrate) navigator.vibrate(30); }
-        }); window.compassActive = true; alert("Putar HP.");
+        window.addEventListener('deviceorientation', (e) => { let c = e.webkitCompassHeading || Math.abs(e.alpha - 360); if (c) { document.getElementById('compass-ring').style.transform = `rotate(${295 - c}deg)`; if (c > 285 && c < 305 && navigator.vibrate) navigator.vibrate(30); } }); window.compassActive = true; alert("Putar HP.");
     } else alert("Sensor tidak didukung.");
 };
-
 window.findNearbyMosque = function() { window.open(`https://www.google.com/maps/search/Masjid+Terdekat`, '_blank'); };
-
 window.tasbihCount = 0;
 window.openTasbih = function() {
     window.tasbihCount++; if (navigator.vibrate) navigator.vibrate(30);
     document.getElementById('tafsir-content').innerHTML = `<div class="text-center cursor-pointer p-3" onclick="window.openTasbih()"><p class="text-muted mb-3">Ketuk area ini untuk bertasbih</p><h1 class="text-primary" style="font-size:80px;">${window.tasbihCount}</h1><button class="btn-outline-primary mt-3" onclick="event.stopPropagation(); window.tasbihCount=0; window.openTasbih();">Reset</button></div>`;
     window.openModal('modal-tafsir');
 };
-
 window.startQuiz = function(t) { let ans = prompt("Hukum nun mati bertemu Ba (ب) disebut?\nA. Ikhfa\nB. Iqlab\nC. Idzhar"); if(ans && ans.toLowerCase() === 'b') alert("✅ Benar!"); else alert("❌ Salah."); };
+
+// --- DATA DOA & TAHLIL ---
+const doaDatabase = [
+    { t: "Doa Sapu Jagad (Kebaikan Dunia Akhirat)", a: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", l: "Rabbana atina fiddunya hasanah wa fil akhiroti hasanah waqina 'adzabannar", i: "Ya Tuhan kami, berilah kami kebaikan di dunia dan kebaikan di akhirat dan peliharalah kami dari siksa neraka." },
+    { t: "Doa Kedua Orang Tua", a: "رَبِّ اغْفِرْ لِيْ وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِيْ صَغِيْرًا", l: "Rabbighfir lii waliwaalidayya warhamhumaa kamaa rabbayaanii shaghiiraa", i: "Ya Tuhanku, ampunilah aku dan kedua orang tuaku, dan sayangilah mereka sebagaimana mereka merawatku di waktu kecil." },
+    { t: "Doa Keluar Rumah", a: "بِسْمِ اللهِ تَوَكَّلْتُ عَلَى اللهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللهِ", l: "Bismillahi tawakkaltu 'alallah, laa hawla wa laa quwwata illaa billaah", i: "Dengan nama Allah, aku bertawakal kepada Allah. Tiada daya dan kekuatan kecuali dengan (pertolongan) Allah." },
+    { t: "Doa Penenang Hati (Anti Gundah)", a: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ", l: "Allahumma inni a'udzu bika minal hammi wal hazan", i: "Ya Allah, sesungguhnya aku berlindung kepada-Mu dari keluh kesah dan kesedihan." },
+    { t: "Sayyidul Istighfar", a: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ", l: "Allahumma anta Rabbi laa ilaaha illaa anta, khalaqtanii wa anaa 'abduka", i: "Ya Allah, Engkau adalah Tuhanku, tidak ada Tuhan yang berhak disembah selain Engkau. Engkaulah yang menciptakanku dan aku adalah hamba-Mu." }
+];
+
+window.switchDoaTab = function(tabName) {
+    const tabU = document.getElementById('tab-doa-umum'); const tabT = document.getElementById('tab-doa-tahlil');
+    const contU = document.getElementById('doa-container'); const contT = document.getElementById('tahlil-container');
+    if(tabName === 'umum') {
+        tabU.style.borderBottom = "3px solid var(--primary-color)"; tabU.style.color = "var(--primary-color)"; tabT.style.borderBottom = "3px solid transparent"; tabT.style.color = "var(--text-muted)";
+        contU.classList.remove('hidden'); contT.classList.add('hidden');
+    } else {
+        tabT.style.borderBottom = "3px solid var(--primary-color)"; tabT.style.color = "var(--primary-color)"; tabU.style.borderBottom = "3px solid transparent"; tabU.style.color = "var(--text-muted)";
+        contT.classList.remove('hidden'); contU.classList.add('hidden'); window.loadTahlil('singkat');
+    }
+};
+
+window.renderDoaList = function(data) {
+    const cont = document.getElementById('doa-container');
+    if(!cont) return;
+    cont.innerHTML = data.map((d, i) => `
+        <div class="doa-item">
+            <div class="doa-header" onclick="window.toggleDoa(${i})"><span>${d.t}</span><i class="fas fa-chevron-down" id="di-icon-${i}"></i></div>
+            <div class="doa-body" id="di-body-${i}">
+                <div class="p-3">
+                    <p class="font-arab text-right mb-2 text-primary" style="font-size:24px;">${d.a}</p>
+                    <p class="small text-primary mb-2" style="font-style:italic;">${d.l}</p>
+                    <p class="small text-muted">${d.i}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+};
+
+window.filterDoa = function() {
+    const q = document.getElementById('search-doa').value.toLowerCase().trim();
+    const filtered = doaDatabase.filter(d => d.t.toLowerCase().includes(q) || d.i.toLowerCase().includes(q));
+    window.renderDoaList(filtered);
+};
+
+window.toggleDoa = function(idx) {
+    const b = document.getElementById(`di-body-${idx}`); const icon = document.getElementById(`di-icon-${idx}`);
+    if(b.style.maxHeight === '0px' || b.style.maxHeight === '') { b.style.maxHeight = '500px'; icon.classList.replace('fa-chevron-down', 'fa-chevron-up'); } 
+    else { b.style.maxHeight = '0px'; icon.classList.replace('fa-chevron-up', 'fa-chevron-down'); }
+};
+
+window.loadTahlil = function(type) {
+    const btnS = document.getElementById('btn-tahlil-singkat'); const btnL = document.getElementById('btn-tahlil-lengkap');
+    if(type === 'singkat') { btnS.classList.replace('btn-outline-primary','btn-primary'); btnL.classList.replace('btn-primary','btn-outline-primary'); }
+    else { btnL.classList.replace('btn-outline-primary','btn-primary'); btnS.classList.replace('btn-primary','btn-outline-primary'); }
+    
+    let html = "";
+    if(type === 'singkat') {
+        html = `
+        <div class="bg-light p-3 border-radius mb-3 text-center">
+            <h4 class="font-bold text-primary mb-2">Tahlil Singkat</h4>
+            <p class="font-arab text-primary mb-2" style="font-size:24px;">لَا إِلَهَ إِلَّا اللهُ</p>
+            <p class="small text-muted">Laa ilaaha illallah (Dibaca 33x / 100x)</p>
+        </div>
+        <div class="bg-light p-3 border-radius text-center">
+            <p class="font-arab text-primary mb-2" style="font-size:24px;">سُبْحَانَ اللهِ وَبِحَمْدِهِ</p>
+            <p class="small text-muted">Subhanallah wa bihamdihi (Dibaca 33x)</p>
+        </div>`;
+    } else {
+        html = `
+        <div class="bg-light p-3 border-radius mb-3">
+            <h4 class="font-bold text-primary mb-2">Urutan Tahlil Lengkap</h4>
+            <ol class="small text-muted" style="padding-left: 15px; line-height: 1.8;">
+                <li>Pengantar Al-Fatihah (Ila hadroti...)</li>
+                <li>Membaca Surat Yasin (Atau Al-Ikhlas 3x, Al-Falaq, An-Nas)</li>
+                <li>Membaca Ayat Kursi</li>
+                <li>Dzikir Tahlil (Laa ilaaha illallah 100x)</li>
+                <li>Sholawat Nabi</li>
+                <li>Doa Arwah / Penutup</li>
+            </ol>
+        </div>`;
+    }
+    document.getElementById('tahlil-content').innerHTML = html;
+};
+
+// Init On Load
+document.addEventListener('DOMContentLoaded', () => { setTimeout(() => { window.renderDoaList(doaDatabase); }, 500); });
 
 window.renderAsmaulHusna = function() {
     const asmaulHusna99 = [
