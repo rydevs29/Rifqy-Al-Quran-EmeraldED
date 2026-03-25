@@ -1,5 +1,5 @@
 /* ==============================================================
-   APP.JS - CORE ENGINE DENGAN SINKRONISASI, 100 QUOTES, FULL SCREEN & AUTO-UPDATE
+   APP.JS - CORE ENGINE (SINKRONISASI, 100 QUOTES, FULL SCREEN AGRESSIF, API ONLINE)
    ============================================================== */
 
 window.syncStorage = {
@@ -37,6 +37,16 @@ window.autoScrollInterval = null; window.scrollSpeed = 0; window.sleepTimeout = 
 window.safeCall = function(fn) { try { if (typeof window[fn] === 'function') window[fn](); } catch (e) { console.error(`Error in ${fn}:`, e); } };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Suntik CSS Paksa untuk Full Screen di Semua Perangkat
+    const style = document.createElement('style');
+    style.innerHTML = `
+        body.reading-mode-fullscreen .top-header,
+        body.reading-mode-fullscreen .bottom-nav,
+        body.reading-mode-fullscreen .sidebar { display: none !important; }
+        body.reading-mode-fullscreen .main-content { margin-left: 0 !important; padding-bottom: 0 !important; width: 100% !important; max-width: 100% !important; }
+    `;
+    document.head.appendChild(style);
+
     window.safeCall('applyThemeInit'); window.safeCall('fixDateDisplay'); 
     window.safeCall('fetchSurahs'); window.safeCall('loadPrefsUI');
     window.safeCall('renderBookmarksPage'); window.safeCall('checkDirectLink'); window.safeCall('getLocationAndPrayerTimes');
@@ -53,21 +63,11 @@ window.switchPage = function(pageId) {
     document.getElementById(pageId).classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-    // ========================================================================
-    // LOGIKA FULL SCREEN MEMBACA (MENYEMBUNYIKAN TANGGAL, NAVIGASI, DLL)
-    // ========================================================================
-    const topHeader = document.querySelector('.top-header');
-    const bottomNav = document.querySelector('.bottom-nav');
-    const sidebar = document.querySelector('.sidebar');
-    
+    // FULL SCREEN AGRESSIF
     if (pageId === 'page-read') {
-        if(topHeader) topHeader.style.display = 'none';
-        if(bottomNav) bottomNav.style.display = 'none';
-        if(sidebar) sidebar.style.display = 'none';
+        document.body.classList.add('reading-mode-fullscreen');
     } else {
-        if(topHeader) topHeader.style.display = '';
-        if(bottomNav) bottomNav.style.display = '';
-        if(sidebar) sidebar.style.display = '';
+        document.body.classList.remove('reading-mode-fullscreen');
     }
 
     if(pageId === 'page-home') { document.getElementById('nav-home-mob')?.classList.add('active'); document.getElementById('nav-home-desk')?.classList.add('active'); }
@@ -186,26 +186,25 @@ window.renderAyatHariIni = function() {
 };
 
 // =======================================================================
-// FIX ERROR ONLINE: SISTEM AUTO-RETRY JIKA quran_data.js LELET DI VERCEL
+// FIX ERROR ONLINE: PENGGABUNGAN API EQURAN (ONLINE) & QURAN_DATA (OFFLINE)
 // =======================================================================
-window.fetchSurahs = function(retryCount = 0) {
+window.fetchSurahs = async function() {
     const list = document.getElementById('surah-list'); if(!list) return;
     try { 
         if (window.OFFLINE_QURAN) {
+            // JIKA OFFLINE (APK), PAKE DATA LOKAL
             window.allSurahs = window.OFFLINE_QURAN.surahs; 
             window.renderSurahs(window.allSurahs); 
         } else {
-            if(retryCount < 5) {
-                // Tampilkan loading berputar dan coba lagi tiap 1 detik (Maksimal 5 detik)
-                list.innerHTML = `<div class="text-center w-100 mt-4"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size: 30px;"></i><p class="mt-2 text-muted">Memuat data dari server... (${retryCount + 1}/5)</p></div>`;
-                setTimeout(() => window.fetchSurahs(retryCount + 1), 1000);
-            } else {
-                // Jika sudah 5 detik tapi masih error, berikan peringatan untuk upload file
-                list.innerHTML = `<div class="text-center mt-3"><p class="text-danger font-bold">Gagal memuat quran_data.js!</p><p class="small text-muted">Pastikan kamu sudah meng-upload file <b>quran_data.js</b> ke Vercel/GitHub.</p></div>`;
-            }
+            // JIKA ONLINE (VERCEL), LANGSUNG PAKE API LAMA! (TANPA BUTUH quran_data.js)
+            list.innerHTML = `<div class="text-center w-100 mt-4"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size: 30px;"></i><p class="mt-2 text-muted">Memuat data dari API server...</p></div>`;
+            const res = await fetch('https://equran.id/api/v2/surat');
+            const data = await res.json();
+            window.allSurahs = data.data;
+            window.renderSurahs(window.allSurahs);
         }
     } 
-    catch (e) { list.innerHTML = `<p class="text-center text-danger font-bold mt-3">Terjadi kesalahan sistem.</p>`; }
+    catch (e) { list.innerHTML = `<p class="text-center text-danger font-bold mt-3">Gagal memuat Al-Quran. Pastikan internet aktif.</p>`; }
 };
 
 window.renderSurahs = function(data) {
@@ -239,12 +238,19 @@ window.checkDirectLink = function() {
     if(surahP) { window.openSurah(parseInt(surahP), ayahP ? parseInt(ayahP) : 1); window.history.replaceState({}, document.title, window.location.pathname); }
 };
 
-window.openSurah = function(nomor, targetAyah = 1) {
+window.openSurah = async function(nomor, targetAyah = 1) {
     window.switchPage('page-read'); document.getElementById('ayah-list').innerHTML = `<div class="text-center mt-5"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:40px;"></i></div>`;
     try {
-        if(!window.OFFLINE_QURAN) throw new Error("Data Offline kosong");
-        
-        window.currentSurah = window.OFFLINE_QURAN.surahs.find(s => s.nomor == nomor);
+        if (window.OFFLINE_QURAN) {
+            // MODE OFFLINE APK
+            window.currentSurah = window.OFFLINE_QURAN.surahs.find(s => s.nomor == nomor);
+        } else {
+            // MODE ONLINE VERCEL PAKE API
+            const res = await fetch(`https://equran.id/api/v2/surat/${nomor}`);
+            const data = await res.json();
+            window.currentSurah = data.data;
+        }
+
         if(!window.currentSurah) throw new Error("Surat tidak ditemukan");
         
         document.getElementById('read-surah-name').innerHTML = window.currentSurah.namaLatin;
@@ -284,6 +290,40 @@ window.openSurah = function(nomor, targetAyah = 1) {
         
         if(targetAyah > 1) { setTimeout(() => { const targetEl = document.getElementById(`ayah-${targetAyah - 1}`); if(targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 600); }
     } catch(e) { alert("Gagal memuat surat. " + e.message); window.switchPage('page-home'); }
+};
+
+// =======================================================================
+// FIX OVERRIDE TAFSIR: PENGGABUNGAN API TAFSIR ONLINE DAN LOKAL OFFLINE
+// =======================================================================
+window.openTafsirPerAyat = async function(surahNo, ayahNo) {
+    document.getElementById('tafsir-content').innerHTML = `<div class="text-center p-4"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:30px;"></i></div>`;
+    document.getElementById('tafsir-ringkas-content').innerHTML = `<div class="text-center p-4"><i class="fas fa-circle-notch fa-spin text-primary" style="font-size:30px;"></i></div>`;
+    document.getElementById('tafsir-title-header').innerHTML = `<i class="fas fa-book-open"></i> Tafsir Ayat ${ayahNo}`;
+    window.switchTafsirTab('kemenag'); 
+    window.openModal('modal-tafsir');
+    
+    try {
+        let tafsirTeks = "";
+        if(window.OFFLINE_QURAN) {
+            // OFFLINE APK
+            const tafsirData = window.OFFLINE_QURAN.tafsirs[surahNo];
+            tafsirTeks = tafsirData.find(t => t.ayat == ayahNo).teks;
+        } else {
+            // ONLINE API
+            const res = await fetch(`https://equran.id/api/v2/tafsir/${surahNo}`);
+            const data = await res.json();
+            tafsirTeks = data.data.tafsir.find(t => t.ayat == ayahNo).teks;
+        }
+        
+        document.getElementById('tafsir-content').innerHTML = `<p style="text-align: justify; font-size:14px; line-height:1.7;">${tafsirTeks}</p>`;
+        
+        if(window.currentSurah) {
+            const terjemah = window.currentSurah.ayat.find(a => a.nomorAyat == ayahNo).teksIndonesia;
+            document.getElementById('tafsir-ringkas-content').innerHTML = `<p style="text-align: justify; font-size:15px; font-weight:bold; color: var(--primary-color);">"${terjemah}"</p><p class="small mt-2">Ini adalah terjemahan langsung dari ayat untuk memudahkan pemahaman ringkas.</p>`;
+        }
+    } catch(e) { 
+        document.getElementById('tafsir-content').innerHTML = `<p class="text-danger font-bold text-center">Gagal memuat tafsir. Pastikan internet aktif.</p>`; 
+    }
 };
 
 window.executeJumpAyah = function() {
@@ -533,7 +573,7 @@ window.toggleAutoScroll = function() {
 const CURRENT_APP_VERSION = 1; 
 
 window.checkUpdateApp = async function() {
-    if (!navigator.onLine) return; // Hanya cek saat online
+    if (!navigator.onLine) return; 
 
     try {
         const response = await fetch('https://www.rifqydev.my.id/2026/03/rifqyalquran.html');
