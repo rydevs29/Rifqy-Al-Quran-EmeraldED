@@ -1,5 +1,5 @@
 /* ==============================================================
-   TAJWID.JS - 14 HUKUM & WAQAF IBTIDA (NO POPUP CLICK)
+   TAJWID.JS - 14 HUKUM & WAQAF IBTIDA (DENGAN TOGGLE POPUP)
    ============================================================== */
 
 const tajwidDatabase = [
@@ -25,35 +25,36 @@ window.applyTajwid = function(text) {
     const space = "[\\s\\u00A0]*";
 
     return text
-        .replace(/([\u0653])/g, `<span class="t-rule tj-mad" onclick="window.showTajwidInfo(event, 'Madd', '$&')">$&</span>`)
-        .replace(/([نم][\u064E-\u0650]?[\u0651])/g, `<span class="t-rule tj-ghunnah" onclick="window.showTajwidInfo(event, 'Ghunnah', '$&')">$&</span>`)
-        .replace(/([\u06E2])/g, `<span class="t-rule tj-iqlab" onclick="window.showTajwidInfo(event, 'Iqlab', '$&')">$&</span>`)
-        .replace(/([بجدطق][\u0652])/g, `<span class="t-rule tj-qalqalah" onclick="window.showTajwidInfo(event, 'Qalqalah', '$&')">$&</span>`)
-        .replace(new RegExp(`(م[\u0652]?)${space}(?=م)`, 'g'), `<span class="t-rule tj-mutamatsilain" onclick="window.showTajwidInfo(event, 'Idgham Mutamatsilain', '$&')">$&</span>`)
-        .replace(new RegExp(`(م[\u0652]?)${space}(?=ب)`, 'g'), `<span class="t-rule tj-ikhfa-syaf" onclick="window.showTajwidInfo(event, 'Ikhfa Syafawi', '$&')">$&</span>`)
-        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[ينمو])`, 'g'), `<span class="t-rule tj-idgham" onclick="window.showTajwidInfo(event, 'Idgham Bighunnah', '$&')">$&</span>`)
-        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[لر])`, 'g'), `<span class="t-rule tj-idgham" onclick="window.showTajwidInfo(event, 'Idgham Bilaghunnah', '$&')">$&</span>`)
-        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[تثجدذزسشصضطظفقك])`, 'g'), `<span class="t-rule tj-ikhfa" onclick="window.showTajwidInfo(event, 'Ikhfa', '$&')">$&</span>`)
-        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[ءأإهعحغخ])`, 'g'), `<span class="t-rule tj-idzhar" onclick="window.showTajwidInfo(event, 'Izhar', '$&')">$&</span>`)
-        .replace(new RegExp(`(ال)(?=${skip}[تثدذرزسشصضطظلن][\u0651])`, 'g'), `<span class="t-rule tj-idgham-syam" onclick="window.showTajwidInfo(event, 'Idgham Syamsiyah', '$&')">$&</span>`)
-        .replace(/([\u06DC])/g, `<span class="t-rule tj-saktah" onclick="window.showTajwidInfo(event, 'Saktah', '$&')">$&</span>`)
-        .replace(/([ٱ])/g, `<span class="t-rule tj-hamzah" onclick="window.showTajwidInfo(event, 'Hamzah Wasl', '$&')">$&</span>`)
-        .replace(new RegExp(`(ق[\u0652]?)${space}(?=ك)`, 'g'), `<span class="t-rule tj-mutaqaribain" onclick="window.showTajwidInfo(event, 'Idgham Mutaqaribain', '$&')">$&</span>`)
-        .replace(new RegExp(`(د[\u0652]?)${space}(?=ت)`, 'g'), `<span class="t-rule tj-mutajanisain" onclick="window.showTajwidInfo(event, 'Idgham Mutajanisain', '$&')">$&</span>`);
+        .replace(/([\u0653])/g, `<span class="t-tajwid-click tj-mad" onclick="window.showTajwidInfo(event, 'Madd', '$&')">$&</span>`)
+        .replace(/([نم][\u064E-\u0650]?[\u0651])/g, `<span class="t-tajwid-click tj-ghunnah" onclick="window.showTajwidInfo(event, 'Ghunnah', '$&')">$&</span>`)
+        .replace(/([\u06E2])/g, `<span class="t-tajwid-click tj-iqlab" onclick="window.showTajwidInfo(event, 'Iqlab', '$&')">$&</span>`)
+        .replace(/([بجدطق][\u0652])/g, `<span class="t-tajwid-click tj-qalqalah" onclick="window.showTajwidInfo(event, 'Qalqalah', '$&')">$&</span>`)
+        .replace(new RegExp(`(م[\u0652]?)${space}(?=م)`, 'g'), `<span class="t-tajwid-click tj-mutamatsilain" onclick="window.showTajwidInfo(event, 'Idgham Mutamatsilain', '$&')">$&</span>`)
+        .replace(new RegExp(`(م[\u0652]?)${space}(?=ب)`, 'g'), `<span class="t-tajwid-click tj-ikhfa-syaf" onclick="window.showTajwidInfo(event, 'Ikhfa Syafawi', '$&')">$&</span>`)
+        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[ينمو])`, 'g'), `<span class="t-tajwid-click tj-idgham" onclick="window.showTajwidInfo(event, 'Idgham Bighunnah', '$&')">$&</span>`)
+        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[لر])`, 'g'), `<span class="t-tajwid-click tj-idgham" onclick="window.showTajwidInfo(event, 'Idgham Bilaghunnah', '$&')">$&</span>`)
+        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[تثجدذزسشصضطظفقك])`, 'g'), `<span class="t-tajwid-click tj-ikhfa" onclick="window.showTajwidInfo(event, 'Ikhfa', '$&')">$&</span>`)
+        .replace(new RegExp(`(ن[\u0652]?|[ًٌٍ])${skip}${space}(?=[ءأإهعحغخ])`, 'g'), `<span class="t-tajwid-click tj-idzhar" onclick="window.showTajwidInfo(event, 'Izhar', '$&')">$&</span>`)
+        .replace(new RegExp(`(ال)(?=${skip}[تثدذرزسشصضطظلن][\u0651])`, 'g'), `<span class="t-tajwid-click tj-idgham-syam" onclick="window.showTajwidInfo(event, 'Idgham Syamsiyah', '$&')">$&</span>`)
+        .replace(/([\u06DC])/g, `<span class="t-tajwid-click tj-saktah" onclick="window.showTajwidInfo(event, 'Saktah', '$&')">$&</span>`)
+        .replace(/([ٱ])/g, `<span class="t-tajwid-click tj-hamzah" onclick="window.showTajwidInfo(event, 'Hamzah Wasl', '$&')">$&</span>`)
+        .replace(new RegExp(`(ق[\u0652]?)${space}(?=ك)`, 'g'), `<span class="t-tajwid-click tj-mutaqaribain" onclick="window.showTajwidInfo(event, 'Idgham Mutaqaribain', '$&')">$&</span>`)
+        .replace(new RegExp(`(د[\u0652]?)${space}(?=ت)`, 'g'), `<span class="t-tajwid-click tj-mutajanisain" onclick="window.showTajwidInfo(event, 'Idgham Mutajanisain', '$&')">$&</span>`);
 };
 
-// --- FUNGSI TANDA WAQAF (HANYA WARNA, TANPA KLIK) ---
 window.applyWaqaf = function(text) {
     if (!text) return "";
     return text
-        .replace(/([\u06D6\u06D7\u06D8\u06DA\u06DB])/g, `<span style="color:#10b981; font-weight:bold; padding: 0 4px;" title="Aman/Dianjurkan Berhenti">$&</span>`) 
-        .replace(/([\u06D9])/g, `<span style="color:#ef4444; font-weight:bold; padding: 0 4px;" title="Dilarang Berhenti">$&</span>`); 
+        .replace(/([\u06D6\u06D7\u06D8\u06DB])/g, `<span class="t-waqaf" style="color:#10b981; font-weight:bold; padding: 0 4px;" onclick="window.showWaqafInfo(event, '$1')">$&</span>`) 
+        .replace(/([\u06D9])/g, `<span class="t-waqaf" style="color:#ef4444; font-weight:bold; padding: 0 4px;" onclick="window.showWaqafInfo(event, '$1')">$&</span>`)
+        .replace(/([\u06DA])/g, `<span class="t-waqaf" style="color:#f59e0b; font-weight:bold; padding: 0 4px;" onclick="window.showWaqafInfo(event, '$1')">$&</span>`);
 };
 
 window.showTajwidInfo = function(event, jenis, huruf) {
     if (event) event.stopPropagation();
+    if (!window.prefs.popupTajwid) return; // Dicek dari toggle di Pengaturan
+
     const tData = tajwidDatabase.find(t => t.id === jenis || t.id.includes(jenis)) || tajwidDatabase[0];
-    
     document.getElementById('t-info-icon').innerText = tData.id.charAt(0);
     document.getElementById('t-info-icon').style.backgroundColor = tData.color;
     document.getElementById('t-info-title').innerText = tData.id;
@@ -63,7 +64,7 @@ window.showTajwidInfo = function(event, jenis, huruf) {
     document.getElementById('t-info-contoh').innerText = tData.contoh;
     document.getElementById('t-info-letters').innerText = huruf;
     
-    document.getElementById('modal-tajwid-info').style.display = 'flex';
+    window.openModal('modal-tajwid-info');
 };
 
 window.renderTajwidGuide = function() {
